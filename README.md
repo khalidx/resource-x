@@ -11,6 +11,9 @@ rx generate <file>
 # Opens the browser to view the resources in the document file
 rx browse <file>
 
+# Deploy the API with mock integration to AWS API Gateway
+rx deploy <file>
+
 # Remove the generated .rx/ directory
 rx clean
 ```
