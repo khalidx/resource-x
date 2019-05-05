@@ -27,6 +27,7 @@ program
     .then((specification) => {
       fse.ensureDirSync(directory)
       fse.writeFileSync(path.join(directory, 'swagger.json'), JSON.stringify(specification, null, 2))
+      fse.writeFileSync(path.join(directory, '.gitignore'), '# Ignoring this directory\n*\n')
     })
     .catch((error) => console.error(error))
   })
