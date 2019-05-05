@@ -4,6 +4,7 @@ import * as pluralize from 'pluralize'
 import * as swagger from 'swagger-parser'
 import { Spec } from 'swagger-schema-official'
 import camelCase from 'camelcase'
+import { APIGateway } from 'aws-sdk'
 
 export async function documentToSwagger (document: string): Promise<Spec> {
   try {
@@ -28,6 +29,8 @@ export async function documentToSwagger (document: string): Promise<Spec> {
         title: 'schemas',
         version: '1.0.0'
       },
+      consumes: [ 'application/json' ],
+      produces: [ 'application/json' ],
       paths: {},
       definitions: yaml.parse(schemas)
     }
@@ -127,4 +130,52 @@ export async function documentToSwagger (document: string): Promise<Spec> {
   } catch (error) {
     throw new Error(`Error while generating swagger specification from the document: ${error.message}`)
   }  
+}
+
+export async function swaggerToSwaggerMock (specification: Spec): Promise<Spec> {
+  try {
+    for (let pathKey of Object.keys(specification.paths)) {
+      for (let operationKey of Object.keys(specification.paths[pathKey])) {
+        specification.paths[pathKey][operationKey]['x-amazon-apigateway-integration'] = {
+          type: 'mock',
+          requestTemplates: {
+            'application/json': '{\"statusCode\": 200}'
+          },
+          responses: {
+            default: {
+              statusCode: '200'
+            }
+          },
+          passthroughBehavior: 'when_no_match'
+        }
+      }
+    }
+
+    specification = await swagger.validate(specification)
+
+    return specification
+
+  } catch (error) {
+    throw new Error(`Error while generating swagger specification from the document: ${error.message}`)
+  }
+}
+
+export async function swaggerToApiGateway (specification: Spec): Promise<void> {
+  try {
+    if (!process.env.AWS_PROFILE || !process.env.AWS_REGION) {
+      throw new Error('You must provide an AWS_PROFILE and AWS_REGION to proceed.')
+    }
+    let gateway = new APIGateway({ apiVersion: '2015-07-09' })
+    let importResponse = await gateway.importRestApi({
+      body: JSON.stringify(specification, null, 2),
+      failOnWarnings: true
+    }).promise()
+    let deploymentResponse = await gateway.createDeployment({
+      restApiId: importResponse.id,
+      stageName: 'dev'
+    }).promise()
+    console.log(`Url: https://${importResponse.id}.execute-api.${process.env.AWS_REGION}.amazonaws.com/dev`)
+  } catch (error) {
+    throw new Error(`Error while deploying swagger specification to AWS API Gateway: ${error.message}`)
+  }
 }

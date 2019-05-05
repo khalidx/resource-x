@@ -13,6 +13,7 @@
     "bundle": "npm run build && pkg . --out-dir ./exec/"
   },
   "dependencies": {
+    "aws-sdk": "^2.449.0",
     "camelcase": "^5.3.1",
     "commander": "^2.20.0",
     "express": "^4.16.4",

@@ -52,4 +52,27 @@ program
     })
   })
 
+program
+  .command('deploy <file>')
+  .description('deploy the API with mock integration to AWS API Gateway')
+  .action(function (file, cmd) {
+    let absolute = path.resolve(file)
+    let directory = path.join(path.dirname(absolute), '.rx/')
+    let swagger = path.join(directory, 'swagger.json')
+    if (!fse.existsSync(swagger)) {
+      console.error('The .rx/swagger.json file does not exist. Run the generate command first.')
+      return
+    }
+    let specification = JSON.parse(fse.readFileSync(swagger).toString())
+    rx
+    .swaggerToSwaggerMock(specification)
+    .then((specification) => {
+      fse.ensureDirSync(directory)
+      fse.writeFileSync(path.join(directory, 'swagger.mock.json'), JSON.stringify(specification, null, 2))
+      rx
+      .swaggerToApiGateway(specification)
+    })
+    .catch((error) => console.error(error))
+  })
+
 program.parse(process.argv)
