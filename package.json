@@ -22,7 +22,8 @@
   "pkg": {
     "assets": [
       "./sample.md",
-      "./node_modules/figlet/fonts/Standard.flf"
+      "./node_modules/figlet/fonts/Standard.flf",
+      "./node_modules/swagger-ui-dist/**/*"
     ]
   },
   "scripts": {
