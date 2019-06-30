@@ -9,13 +9,6 @@ import * as swaggerUi from 'swagger-ui-express'
 import * as open from 'open'
 
 program
-  .command('clean')
-  .description('remove the generated .rx/ directory')
-  .action(function (cmd) {
-    fse.removeSync(path.join(process.cwd(), '.rx/'))
-  })
-
-program
   .command('generate <file>')
   .description('generate an API specification from the document file')
   .action(function (file, cmd) {
@@ -70,10 +63,23 @@ program
     .then((specification) => {
       fse.ensureDirSync(directory)
       fse.writeFileSync(path.join(directory, 'swagger.mock.json'), JSON.stringify(specification, null, 2))
-      rx
-      .swaggerToApiGateway(specification)
     })
+    .then(() => rx.swaggerToApiGateway(specification))
     .catch((error) => console.error(error))
+  })
+
+program
+  .command('undeploy <file>')
+  .description('undeploy the API from AWS API Gateway')
+  .action(function (file, cmd) {
+    console.error('Not yet implemented.')
+  })
+
+program
+  .command('clean')
+  .description('remove the generated .rx/ directory')
+  .action(function (cmd) {
+    fse.removeSync(path.join(process.cwd(), '.rx/'))
   })
 
 program.parse(process.argv)
