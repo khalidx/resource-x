@@ -82,6 +82,13 @@ program
   })
 
 program
+  .command('output <file>')
+  .description('output the deployment files without actually deploying')
+  .action(function (file, cmd) {
+    console.error('Not yet implemented.')
+  })
+
+program
   .command('undeploy <file>')
   .description('undeploy the API from AWS API Gateway')
   .action(function (file, cmd) {
