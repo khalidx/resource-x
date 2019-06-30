@@ -19,6 +19,11 @@
   },
   "main": "./dist/index.js",
   "bin": "./dist/cli.js",
+  "pkg": {
+    "assets": [
+      "./sample.md"
+    ]
+  },
   "scripts": {
     "dev": "ts-node ./src/cli.ts",
     "clean": "rimraf ./dist/ ./exec/",
