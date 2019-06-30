@@ -6,6 +6,39 @@ import { Spec } from 'swagger-schema-official'
 import camelCase from 'camelcase'
 import { APIGateway } from 'aws-sdk'
 
+export async function sampleDocument (): Promise<string> {
+  return `# A Sample API
+
+## The person model
+
+\`\`\`json
+{
+  "$id": "https://example.com/person.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Person",
+  "type": "object",
+  "properties": {
+    "firstName": {
+      "type": "string",
+      "description": "The person's first name."
+    },
+    "lastName": {
+      "type": "string",
+      "description": "The person's last name."
+    },
+    "age": {
+      "description": "Age in years which must be equal to or greater than zero.",
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}
+\`\`\`
+
+## The company model
+`
+}
+
 export async function documentToSwagger (document: string): Promise<Spec> {
   try {
     let tokens = marked.lexer(document)

@@ -9,6 +9,19 @@ import * as swaggerUi from 'swagger-ui-express'
 import * as open from 'open'
 
 program
+  .command('init')
+  .description('initialize a new sample project in the current directory')
+  .action(function (cmd) {
+    let directory = process.cwd()
+    rx
+    .sampleDocument()
+    .then((document) => {
+      fse.writeFileSync(path.join(directory, 'sample.md'), document)
+    })
+    .catch((error) => console.error(error))
+  })
+
+program
   .command('generate <file>')
   .description('generate an API specification from the document file')
   .action(function (file, cmd) {
