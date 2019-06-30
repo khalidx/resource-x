@@ -9,25 +9,21 @@ import { APIGateway } from 'aws-sdk'
 export async function sampleDocument (): Promise<string> {
   return `# A Sample API
 
+This sample API is for managing people and teams.
+
 ## The person model
 
 \`\`\`json
 {
-  "$id": "https://example.com/person.schema.json",
-  "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Person",
   "type": "object",
   "properties": {
-    "firstName": {
+    "name": {
       "type": "string",
-      "description": "The person's first name."
-    },
-    "lastName": {
-      "type": "string",
-      "description": "The person's last name."
+      "description": "The person's full name."
     },
     "age": {
-      "description": "Age in years which must be equal to or greater than zero.",
+      "description": "The person's age in years, which must be equal to or greater than zero.",
       "type": "integer",
       "minimum": 0
     }
@@ -35,7 +31,29 @@ export async function sampleDocument (): Promise<string> {
 }
 \`\`\`
 
-## The company model
+## The team model
+
+A team is a group of people.
+
+*Yes, you can also write your JSON Schemas in YAML (easier to read).*
+*Yes, you can refer to other schemas (the team schema below refers to the person schema above).*
+
+\`\`\`yaml
+team:
+  type: object
+  required:
+    - name
+    - people
+  properties:
+    name:
+      type: string
+      description: 'The name of the team'
+    people:
+      type: array
+      description: 'The people on the team'
+      items:
+        $ref: '#/definitions/person'
+\`\`\`
 `
 }
 
