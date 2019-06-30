@@ -6,17 +6,18 @@ This sample API is for managing people and teams.
 
 ```json
 {
-  "title": "Person",
-  "type": "object",
-  "properties": {
-    "name": {
-      "type": "string",
-      "description": "The person's full name."
-    },
-    "age": {
-      "description": "The person's age in years, which must be equal to or greater than zero.",
-      "type": "integer",
-      "minimum": 0
+  "person": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "The person's full name."
+      },
+      "age": {
+        "description": "The person's age in years, which must be equal to or greater than zero.",
+        "type": "integer",
+        "minimum": 0
+      }
     }
   }
 }
