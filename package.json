@@ -36,6 +36,7 @@
     "camelcase": "^5.3.1",
     "commander": "^2.20.0",
     "express": "^4.16.4",
+    "figlet": "^1.2.3",
     "fs-extra": "^7.0.1",
     "marked": "^0.6.2",
     "open": "^6.2.0",
@@ -46,6 +47,7 @@
   },
   "devDependencies": {
     "@types/express": "^4.16.1",
+    "@types/figlet": "^1.2.0",
     "@types/fs-extra": "^5.0.5",
     "@types/marked": "^0.6.5",
     "@types/node": "^12.0.0",
