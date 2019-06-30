@@ -2,11 +2,15 @@
 
 Resource and domain modeling for quick APIs, CMSs, and applications.
 
-## Currently Supported
+## Features
 
-- Write a markdown document with some JSON schemas
-  - get a Swagger spec and deployable mock API for free
-    - the API is deployable to AWS
+Deploy an API to the cloud in under 30 seconds, in just 3 steps.
+
+1) Build your domain objects as JSON Schemas, all in the same Markdown document.
+   
+2) When you run `rx generate`, you'll get a full CRUD (create-read-update-delete) Swagger specification for your API.
+
+3) You can then deploy your specification to AWS API Gateway, complete with request validation and mock responses, with a single `rx deploy` command.
 
 ## Usage
 
