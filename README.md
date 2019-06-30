@@ -4,7 +4,7 @@ Resource and domain modeling for quick APIs, CMSs, and applications.
 
 ## Features
 
-Deploy an API to the cloud in under 30 seconds, in just 3 steps.
+Deploy an API to the cloud **in under 30 seconds**, *in just 3 steps*.
 
 1) Build your domain objects as JSON Schemas, all in the same Markdown document. Alternatively, run `rx init` to get a ready-to-use document with two sample schemas.
    
