@@ -27,6 +27,9 @@ rx browse <file>
 # Deploy the API with mock integration to AWS API Gateway
 rx deploy <file>
 
+# Undeploy the API from AWS API Gateway
+rx undeploy <file>
+
 # Remove the generated .rx/ directory
 rx clean
 ```
