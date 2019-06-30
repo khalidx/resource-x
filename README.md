@@ -2,6 +2,10 @@
 
 Resource and domain modeling for quick APIs, CMSs, and applications.
 
+![GitHub](https://img.shields.io/github/license/khalidx/resource-x.svg?style=flat-square)
+![GitHub package.json dynamic](https://img.shields.io/github/package-json/keywords/khalidx/resource-x.svg?style=flat-square)
+![GitHub last commit](https://img.shields.io/github/last-commit/khalidx/resource-x.svg?style=flat-square)
+
 ## Features
 
 Deploy an API to the cloud **in under 30 seconds**, *in just 3 steps*.
