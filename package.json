@@ -5,6 +5,17 @@
   "description": "Resource and domain modeling for quick APIs, CMSs, and applications.",
   "author": "Khalid Zoabi <kzoabi@outlook.com>",
   "license": "MIT",
+  "keywords": [
+    "api",
+    "markdown",
+    "json-schema",
+    "swagger",
+    "aws-api-gateway"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/khalidx/resource-x.git"
+  },
   "main": "./dist/index.js",
   "bin": "./dist/cli.js",
   "scripts": {
