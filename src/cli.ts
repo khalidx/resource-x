@@ -9,46 +9,64 @@ import open from 'open'
 
 import * as rx from './index'
 
-program
-  .command('init')
-  .description('initialize a new sample project in the current directory')
-  .action(function (cmd) {
-    let document = fse.readFileSync(path.join(__dirname, '../sample.md'))
-    fse.writeFileSync(path.join(process.cwd(), 'sample.md'), document)
-  })
+/**
+ * Initializes a new sample project in the specified directory.
+ * @param directory the path of the directory to use
+ */
+export const init = async (directory: string): Promise<void> => {
+  try {
+    // Get the sample document (this is read from the assets directory in the final bundle)
+    let document = await fse.readFile(path.join(__dirname, '../sample.md'))
+    // Write the document to the specified directory
+    await fse.writeFile(path.join(directory, 'sample.md'), document)
+  } catch (error) {
+    throw new Error(`Error while initializing the project: ${error.message}`)
+  }
+}
 
-program
-  .command('generate <file>')
-  .description('generate an API specification from the document file')
-  .action(function (file, cmd) {
-    let absolute = path.resolve(file)
-    let directory = path.join(path.dirname(absolute), '.rx/')
-    let document = fse.readFileSync(absolute).toString()
-    Promise
-    .resolve(document)
-    .then(rx.tokens)
-    .then(rx.schemas)
-    .then(rx.specification)
-    .then((specification) => {
-      fse.ensureDirSync(directory)
-      fse.writeFileSync(path.join(directory, 'swagger.json'), JSON.stringify(specification, null, 2))
-      fse.writeFileSync(path.join(directory, '.gitignore'), '# Ignoring this directory\n*\n')
-    })
-    .catch((error) => console.error(error))
-  })
+/**
+ * Generates an API specification in the specified directory from the specified document file.
+ * @param directory the path of the directory to use
+ * @param file the name of the document file to use
+ */
+export const generate = async (directory: string, file: string): Promise<void> => {
+  try {
+    // Read the document from the provided directory and file combination
+    let document = (await fse.readFile(path.join(directory, file))).toString()
+    // Generate the API specification from the document
+    let specification = await rx.specification(await rx.schemas(await rx.tokens(document)))
+    // Ensure the output .rx/ directory is created
+    let rxDirectory = await path.join(directory, '.rx/')
+    await fse.ensureDir(rxDirectory)
+    // Write a .gitignore to the .rx/ directory to ensure generated files are not committed
+    await fse.writeFile(path.join(rxDirectory, '.gitignore'), '# Ignoring this directory\n*\n')
+    // Ensure the output .rx/<file>/ directory is created
+    let specificDirectory = await path.join(rxDirectory, path.basename(file, path.extname(file)))
+    await fse.ensureDir(specificDirectory)
+    // Write the API specification object to the file-specific directory
+    await fse.writeFile(path.join(specificDirectory, 'swagger.json'), JSON.stringify(specification, null, 2))
+  } catch (error) {
+    throw new Error(`Error while generating the API specification: ${error.message}`)
+  }
+}
 
-program
-  .command('browse <file>')
-  .description('opens the browser to view the resources in the document file')
-  .action(function (file, cmd) {
-    let absolute = path.resolve(file)
-    let directory = path.join(path.dirname(absolute), '.rx/')
-    let swagger = path.join(directory, 'swagger.json')
-    if (!fse.existsSync(swagger)) {
+/**
+ * Opens the browser to view the generated Swagger API specification.
+ * @param directory the path of the directory to use
+ * @param file the name of the document file to use
+ */
+export const browse = async (directory: string, file: string): Promise<void> => {
+  try {
+    // Ensure the corresponding swagger file for the provided document file exists 
+    let swaggerFile = path.join(directory, '.rx/', path.basename(file, path.extname(file)), 'swagger.json')
+    let swaggerFileExists = await fse.pathExists(swaggerFile)
+    if (!swaggerFileExists) {
       console.error('The .rx/swagger.json file does not exist. Run the generate command first.')
       return
     }
-    let specification = JSON.parse(fse.readFileSync(swagger).toString())
+    // Read the swagger file
+    let specification = JSON.parse((await fse.readFile(swaggerFile)).toString())
+    // Serve the Swagger file in the Swagger UI, and open the browser
     let app = express()
     let port = 8080
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specification))
@@ -56,51 +74,73 @@ program
       console.log(`swagger-ui listening on port ${port}`)
       open(`http://localhost:${port}/api-docs`)
     })
-  })
+  } catch (error) {
+    throw new Error(`Error while browsing the API specification: ${error.message}`)
+  }
+}
 
-program
-  .command('deploy <file>')
-  .description('deploy the API with mock integration to AWS API Gateway')
-  .action(function (file, cmd) {
-    let absolute = path.resolve(file)
-    let directory = path.join(path.dirname(absolute), '.rx/')
-    let swagger = path.join(directory, 'swagger.json')
-    if (!fse.existsSync(swagger)) {
+/**
+ * Deploys the API with mock integration to the AWS API Gateway
+ * @param directory the path of the directory to use
+ * @param file the name of the document file to use
+ */
+export const deploy = async (directory: string, file: string): Promise<void> => {
+  try {
+    // Ensure the corresponding swagger file for the provided document file exists 
+    let swaggerFile = path.join(directory, '.rx/', path.basename(file, path.extname(file)), 'swagger.json')
+    let swaggerFileExists = await fse.pathExists(swaggerFile)
+    if (!swaggerFileExists) {
       console.error('The .rx/swagger.json file does not exist. Run the generate command first.')
       return
     }
-    let specification = JSON.parse(fse.readFileSync(swagger).toString())
-    Promise
-    .resolve(specification)
-    .then(rx.mocks)
-    .then((specification) => {
-      fse.ensureDirSync(directory)
-      fse.writeFileSync(path.join(directory, 'swagger.mock.json'), JSON.stringify(specification, null, 2))
-      return specification
-    })
-    .then(rx.deploy)
-    .catch((error) => console.error(error))
-  })
+    // Read the swagger file
+    let specification = JSON.parse((await fse.readFile(swaggerFile)).toString())
+    // Add mocks, and save the new specification file
+    let specificationWithMocks = await rx.mocks(specification)
+    await fse.writeFile(path.join(directory, '.rx/', path.basename(file, path.extname(file)), 'swagger.mock.json'), specificationWithMocks)
+    // Deploy the specification with mockss
+    await rx.deploy(specificationWithMocks)
+  } catch (error) {
+    throw new Error(`Error while deploying the API to the AWS API Gateway: ${error.message}`)
+  }
+}
+
+/**
+ * Removes the generated .rx/ directory
+ * @param directory the path of the directory to use
+ */
+export const clean = async (directory: string): Promise<void> => fse.remove(path.join(directory, '.rx/'))
 
 program
+
+  .version(require('../package.json').version)
+
+  .command('init')
+  .description('initialize a new sample project in the current directory')
+  .action((cmd) => init(process.cwd()).catch(console.error))
+
+  .command('generate <file>')
+  .description('generate an API specification from the document file')
+  .action((file, cmd) => generate(process.cwd(), file).catch(console.error))
+
+  .command('browse <file>')
+  .description('opens the browser to view the resources in the document file')
+  .action((file, cmd) => browse(process.cwd(), file).catch(console.error))
+
+  .command('deploy <file>')
+  .description('deploy the API with mock integration to AWS API Gateway')
+  .action((file, cmd) => deploy(process.cwd(), file).catch(console.error))
+
   .command('output <file>')
   .description('output the deployment files without actually deploying')
-  .action(function (file, cmd) {
-    console.error('Not yet implemented.')
-  })
+  .action((file, cmd) => console.error('Not yet implemented.'))
 
-program
   .command('undeploy <file>')
   .description('undeploy the API from AWS API Gateway')
-  .action(function (file, cmd) {
-    console.error('Not yet implemented.')
-  })
+  .action((file, cmd) => console.error('Not yet implemented.'))
 
-program
   .command('clean')
   .description('remove the generated .rx/ directory')
-  .action(function (cmd) {
-    fse.removeSync(path.join(process.cwd(), '.rx/'))
-  })
+  .action((cmd) => clean(process.cwd()).catch(console.error))
 
-program.parse(process.argv)
+  .parse(process.argv)
