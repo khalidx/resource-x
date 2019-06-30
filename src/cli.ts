@@ -12,13 +12,8 @@ program
   .command('init')
   .description('initialize a new sample project in the current directory')
   .action(function (cmd) {
-    let directory = process.cwd()
-    rx
-    .sampleDocument()
-    .then((document) => {
-      fse.writeFileSync(path.join(directory, 'sample.md'), document)
-    })
-    .catch((error) => console.error(error))
+    let document = fse.readFileSync(path.join(__dirname, '../sample.md'))
+    fse.writeFileSync(path.join(process.cwd(), 'sample.md'), document)
   })
 
 program
