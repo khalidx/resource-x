@@ -12,6 +12,7 @@
     "swagger",
     "aws-api-gateway"
   ],
+  "homepage": "https://khalidx.github.io/resource-x/",
   "repository": {
     "type": "git",
     "url": "https://github.com/khalidx/resource-x.git"
