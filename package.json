@@ -21,7 +21,8 @@
   "bin": "./dist/cli.js",
   "pkg": {
     "assets": [
-      "./sample.md"
+      "./sample.md",
+      "./node_modules/figlet/fonts/Standard.flf"
     ]
   },
   "scripts": {
