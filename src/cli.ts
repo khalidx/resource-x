@@ -23,8 +23,11 @@ program
     let absolute = path.resolve(file)
     let directory = path.join(path.dirname(absolute), '.rx/')
     let document = fse.readFileSync(absolute).toString()
-    rx
-    .documentToSwagger(document)
+    Promise
+    .resolve(document)
+    .then(rx.tokens)
+    .then(rx.schemas)
+    .then(rx.specification)
     .then((specification) => {
       fse.ensureDirSync(directory)
       fse.writeFileSync(path.join(directory, 'swagger.json'), JSON.stringify(specification, null, 2))
@@ -66,13 +69,15 @@ program
       return
     }
     let specification = JSON.parse(fse.readFileSync(swagger).toString())
-    rx
-    .swaggerToSwaggerMock(specification)
+    Promise
+    .resolve(specification)
+    .then(rx.mocks)
     .then((specification) => {
       fse.ensureDirSync(directory)
       fse.writeFileSync(path.join(directory, 'swagger.mock.json'), JSON.stringify(specification, null, 2))
+      return specification
     })
-    .then(() => rx.swaggerToApiGateway(specification))
+    .then(rx.deploy)
     .catch((error) => console.error(error))
   })
 

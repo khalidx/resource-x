@@ -6,10 +6,25 @@ import { Spec } from 'swagger-schema-official'
 import camelCase from 'camelcase'
 import { APIGateway } from 'aws-sdk'
 
-export async function documentToSwagger (document: string): Promise<Spec> {
+/**
+ * Uses the marked lexer to extract tokens from the Markdown document
+ * @param document the Markdown document, as a string
+ */
+export const tokens = async (document: string): Promise<marked.TokensList> => {
   try {
-    let tokens = marked.lexer(document)
-    let schemas = tokens.reduce((combined, token) => {
+    return marked.lexer(document)
+  } catch (error) {
+    throw new Error(`Error while parsing the Markdown document: ${error.message}`)
+  }
+}
+
+/**
+ * Finds Markdown code blocks in the token list, and combines them into a string containing schemas
+ * @param tokens the Markdown tokens
+ */
+export const schemas = async (tokens: marked.TokensList): Promise<string> => {
+  try {
+    return tokens.reduce((combined, token) => {
       if (token.type === 'code' && token.text.length > 0) {
         if (token.lang === 'json') {
           return combined += `${yaml.stringify(JSON.parse(token.text))}\n`
@@ -20,9 +35,18 @@ export async function documentToSwagger (document: string): Promise<Spec> {
       }
       return combined
     }, '')
+  } catch (error) {
+    throw new Error(`Error while extracting schemas from the Markdown document: ${error.message}`)
+  }
+}
 
+/**
+ * Creates a Swagger API specification with CRUD operations for each schema
+ * @param schemas the combined schemas string
+ */
+export const specification = async (schemas: string): Promise<Spec> => {
+  try {
     // build a swagger definition from schemas
-
     let specification: Spec = {
       swagger: '2.0',
       info: {
@@ -34,13 +58,9 @@ export async function documentToSwagger (document: string): Promise<Spec> {
       paths: {},
       definitions: yaml.parse(schemas)
     }
-
     // validate schemas
-
     specification = await swagger.validate(specification)
-
     // build all default routes for all resources
-
     for (let key of Object.keys(specification.definitions)) {
       let collection = pluralize(key)
       specification.tags = [
@@ -120,19 +140,19 @@ export async function documentToSwagger (document: string): Promise<Spec> {
         }
       }
     }
-
     // validate swagger definition against the official swagger schema and spec
-
     specification = await swagger.validate(specification)
-
     return specification
-    
   } catch (error) {
-    throw new Error(`Error while generating swagger specification from the document: ${error.message}`)
+    throw new Error(`Error while generating the swagger specification from the document: ${error.message}`)
   }  
 }
 
-export async function swaggerToSwaggerMock (specification: Spec): Promise<Spec> {
+/**
+ * Adds the AWS API Gateway mock integrations to the Swagger API specification
+ * @param specification the Swagger API specification object
+ */
+export const mocks = async (specification: Spec): Promise<Spec> => {
   try {
     for (let pathKey of Object.keys(specification.paths)) {
       for (let operationKey of Object.keys(specification.paths[pathKey])) {
@@ -150,17 +170,18 @@ export async function swaggerToSwaggerMock (specification: Spec): Promise<Spec> 
         }
       }
     }
-
     specification = await swagger.validate(specification)
-
     return specification
-
   } catch (error) {
-    throw new Error(`Error while generating swagger specification from the document: ${error.message}`)
+    throw new Error(`Error while generating the mock integrations for the swagger specification: ${error.message}`)
   }
 }
 
-export async function swaggerToApiGateway (specification: Spec): Promise<void> {
+/**
+ * Deploys the Swagger API specification to AWS API Gateway
+ * @param specification the Swagger API specification object
+ */
+export const deploy = async (specification: Spec): Promise<void> => {
   try {
     if (!process.env.AWS_PROFILE || !process.env.AWS_REGION) {
       throw new Error('You must provide an AWS_PROFILE and AWS_REGION to proceed.')
@@ -176,6 +197,6 @@ export async function swaggerToApiGateway (specification: Spec): Promise<void> {
     }).promise()
     console.log(`Url: https://${importResponse.id}.execute-api.${process.env.AWS_REGION}.amazonaws.com/dev`)
   } catch (error) {
-    throw new Error(`Error while deploying swagger specification to AWS API Gateway: ${error.message}`)
+    throw new Error(`Error while deploying the swagger specification to the AWS API Gateway: ${error.message}`)
   }
 }
