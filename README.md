@@ -61,6 +61,12 @@ Remove the generated .rx/ directory.
 rx clean
 ```
 
+See help and usage information about all available commands.
+
+```sh
+rx --help
+```
+
 ## Support
 
 Open a GitHub issue to ask a question, report a bug, raise a concern, or request a new feature.
