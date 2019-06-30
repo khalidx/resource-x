@@ -1,14 +1,13 @@
 import test from 'ava'
 
-import * as path from 'path'
-import * as fse from 'fs-extra'
+import path from 'path'
+import fse from 'fs-extra'
 
 import {
   tokens,
   schemas,
   specification,
-  mocks,
-  deploy
+  mocks
 } from './index'
 
 let document: string
@@ -38,14 +37,3 @@ test('can add the AWS API Gateway mock integrations to the Swagger API specifica
   t.truthy(actual.paths[Object.keys(actual.paths)[0]].post['x-amazon-apigateway-integration'])
   t.is(actual.paths[Object.keys(actual.paths)[0]].post['x-amazon-apigateway-integration'].type, 'mock')
 })
-
-// test.after(async t => {
-//   let directory = path.join(__dirname, '../.literal/')
-//   await fse.ensureDir(directory)
-//   let gitignore = '*\n'
-//   await fse.writeFile(path.join(directory, '.gitignore'), gitignore)
-//   let ast = await getAst(document)
-//   await fse.writeFile(path.join(directory, 'ast.json'), JSON.stringify(ast, null, 2))
-//   let html = await getHtml(document)
-//   await fse.writeFile(path.join(directory, 'document.html'), html)
-// })

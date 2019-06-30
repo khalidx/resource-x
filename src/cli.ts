@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 
-import * as fse from 'fs-extra'
-import * as path from 'path'
-import * as program from 'commander'
+import fse from 'fs-extra'
+import path from 'path'
+import program from 'commander'
+import express from 'express'
+import swaggerUi from 'swagger-ui-express'
+import open from 'open'
+
 import * as rx from './index'
-import * as express from 'express'
-import * as swaggerUi from 'swagger-ui-express'
-import * as open from 'open'
 
 program
   .command('init')
