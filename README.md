@@ -2,6 +2,11 @@
 
 Resource and domain modeling for quick APIs, CMSs, and applications.
 
+- [resource-x](#resource-x)
+  - [Features](#Features)
+  - [Usage](#Usage)
+  - [Support](#Support)
+
 ## Features
 
 Deploy an API to the cloud **in under 30 seconds**, *in just 3 steps*.
@@ -14,22 +19,41 @@ Deploy an API to the cloud **in under 30 seconds**, *in just 3 steps*.
 
 ## Usage
 
+Initialize a new sample project in the current directory.
+
 ```sh
-# Initialize a new sample project in the current directory
 rx init
+```
+Generate an API specification from the document file.
 
-# Generate an API specification from the document file
+```sh
 rx generate <file>
+```
 
-# Opens the browser to view the resources in the document file
+Opens the browser to view the resources in the document file.
+
+```sh
 rx browse <file>
+```
 
-# Deploy the API with mock integration to AWS API Gateway
+Deploy the API with mock integration to AWS API Gateway.
+
+```sh
 rx deploy <file>
+```
 
-# Undeploy the API from AWS API Gateway
+Undeploy the API from AWS API Gateway.
+
+```sh
 rx undeploy <file>
+```
 
-# Remove the generated .rx/ directory
+Remove the generated .rx/ directory.
+
+```sh
 rx clean
 ```
+
+## Support
+
+Open a GitHub issue to ask a question, report a bug, raise a concern, or request a new feature.
