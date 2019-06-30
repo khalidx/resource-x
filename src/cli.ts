@@ -112,35 +112,42 @@ export const deploy = async (directory: string, file: string): Promise<void> => 
 export const clean = async (directory: string): Promise<void> => fse.remove(path.join(directory, '.rx/'))
 
 program
-
   .version(require('../package.json').version)
 
+program
   .command('init')
   .description('initialize a new sample project in the current directory')
   .action((cmd) => init(process.cwd()).catch(console.error))
 
+program
   .command('generate <file>')
   .description('generate an API specification from the document file')
   .action((file, cmd) => generate(process.cwd(), file).catch(console.error))
 
+program
   .command('browse <file>')
   .description('opens the browser to view the resources in the document file')
   .action((file, cmd) => browse(process.cwd(), file).catch(console.error))
 
+program
   .command('deploy <file>')
   .description('deploy the API with mock integration to AWS API Gateway')
   .action((file, cmd) => deploy(process.cwd(), file).catch(console.error))
 
+program
   .command('output <file>')
   .description('output the deployment files without actually deploying')
   .action((file, cmd) => console.error('Not yet implemented.'))
 
+program
   .command('undeploy <file>')
   .description('undeploy the API from AWS API Gateway')
   .action((file, cmd) => console.error('Not yet implemented.'))
 
+program
   .command('clean')
   .description('remove the generated .rx/ directory')
   .action((cmd) => clean(process.cwd()).catch(console.error))
 
+program
   .parse(process.argv)
