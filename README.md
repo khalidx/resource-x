@@ -2,11 +2,6 @@
 
 Resource and domain modeling for quick APIs, CMSs, and applications.
 
-- [resource-x](#resource-x)
-  - [Features](#Features)
-  - [Usage](#Usage)
-  - [Support](#Support)
-
 ## Features
 
 Deploy an API to the cloud **in under 30 seconds**, *in just 3 steps*.
