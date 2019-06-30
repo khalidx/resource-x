@@ -21,7 +21,9 @@
   "bin": "./dist/cli.js",
   "scripts": {
     "dev": "ts-node ./src/cli.ts",
-    "build": "tsc",
+    "clean": "rimraf ./dist/ ./exec/",
+    "build": "npm run clean && tsc",
+    "test": "npm run build && ava --verbose",
     "bundle": "npm run build && pkg . --out-dir ./exec/"
   },
   "dependencies": {
@@ -46,7 +48,10 @@
     "@types/swagger-parser": "^4.0.3",
     "@types/swagger-ui-express": "^3.0.0",
     "@types/yamljs": "^0.2.30",
+    "ava": "^2.1.0",
     "pkg": "^4.3.8",
-    "typescript": "^3.4.5"
+    "rimraf": "^2.6.3",
+    "ts-node": "^8.3.0",
+    "typescript": "^3.5.2"
   }
 }
