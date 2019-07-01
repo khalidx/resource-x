@@ -3,6 +3,7 @@
 import fse from 'fs-extra'
 import path from 'path'
 import program from 'commander'
+import inquirer from 'inquirer'
 import figlet from 'figlet'
 import express from 'express'
 import swaggerUi from 'swagger-ui-express'
@@ -112,7 +113,28 @@ export const deploy = async (directory: string, file: string): Promise<void> => 
  * Removes the generated .rx/ directory
  * @param directory the path of the directory to use
  */
-export const clean = async (directory: string): Promise<void> => fse.remove(path.join(directory, '.rx/'))
+export const clean = async (directory: string): Promise<void> => {
+  try {
+    console.warn('Cleaning the .rx/ directory will remove the AWS API ID tracker (deploy.json).')
+    console.warn('The next time you deploy, a new API will be created.')
+    let { proceed } = await inquirer.prompt<{ proceed: boolean }>([
+      {
+        name: 'proceed',
+        message: 'Are you sure you would like to continue?',
+        type: 'confirm',
+        default: false
+      }
+    ])
+    if (proceed) {
+      await fse.remove(path.join(directory, '.rx/'))
+      console.log('Directory removed.')
+    } else {
+      console.log('No changes made.')
+    }
+  } catch (error) {
+    throw new Error(`Error while removing the generated .rx/ directory: ${error.message}`)
+  }
+}
 
 /**
  * Clears the console and shows the banner
