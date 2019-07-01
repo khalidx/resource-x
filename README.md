@@ -69,6 +69,12 @@ See help and usage information about all available commands.
 rx --help
 ```
 
+## Pro tips and tricks
+
+- Commit the `.rx/**/deploy.json` files. These track your AWS API Gateway deployments, so that you don't end up creating a new API every time you check out from git and deploy.
+
+- Make sure you only use AWS API Gateway compatible schema definitions. AWS does not support the full Swagger definition language. [Read more](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-known-issues.html#api-gateway-known-issues-rest-apis) about what is supported (and what isn't) in the AWS documentation.
+
 ## Support
 
 Open a GitHub issue to ask a question, report a bug, raise a concern, or request a new feature.
