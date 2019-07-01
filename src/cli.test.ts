@@ -26,11 +26,6 @@ test.serial('can generate an API specification', async t => {
   t.true(await fse.pathExists(path.join(scratchDirectory, '.rx/sample/', 'swagger.json')))
 })
 
-test.serial('can remove the generated .rx/ directory', async t => {
-  await clean(scratchDirectory)
-  t.false(await fse.pathExists(path.join(scratchDirectory, '.rx/')))
-})
-
 test.after(async t => {
   // delete the temporary scratch directory
   await fse.remove(scratchDirectory)
