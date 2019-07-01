@@ -73,6 +73,8 @@ rx --help
 
 - Commit the `.rx/**/deploy.json` files. These track your AWS API Gateway deployments, so that you don't end up creating a new API every time you check out from git and deploy.
 
+- If you've already deployed your API, then later decide to rename it (by changing the heading in the Markdown document), make sure you also rename the corresponding `.rx/` directory for the API. This will ensure that you deploy an update to the same API rather than creating a new one.
+
 - Make sure you only use AWS API Gateway compatible schema definitions. AWS does not support the full Swagger definition language. [Read more](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-known-issues.html#api-gateway-known-issues-rest-apis) about what is supported (and what isn't) in the AWS documentation.
 
 - You may want to do more advanced things with your API that this tool does not support. You can still use the tool to get started and generate a Swagger definition, then modify your definition by hand or with other tools before uploading to AWS manually. This will still save you some time, since writing the initial Swagger with all operations and AWS support is very time consuming.
