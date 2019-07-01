@@ -10,6 +10,8 @@ import open from 'open'
 
 import * as rx from './index'
 
+const debug = require('debug')('rx:cli')
+
 /**
  * Initializes a new sample project in the specified directory.
  * @param directory the path of the directory to use
@@ -129,6 +131,15 @@ async function showBanner (text: string): Promise<void> {
   })
 }
 
+/**
+ * Logs and exits with a non-zero status code on error.
+ * If in deb
+ */
+async function onError (error: any): Promise<void> {
+  process.env.DEBUG ? debug(error) : console.error(error.message)
+  process.exit(1)
+}
+
 let { name, version } = require('../package.json')
 
 program
@@ -137,22 +148,22 @@ program
 program
   .command('init')
   .description('initialize a new sample project in the current directory')
-  .action((cmd) => showBanner(name).then(() => init(process.cwd()).catch(console.error)))
+  .action((cmd) => showBanner(name).then(() => init(process.cwd()).catch(onError)))
 
 program
   .command('generate <file>')
   .description('generate an API specification from the document file')
-  .action((file, cmd) => showBanner(name).then(() => generate(process.cwd(), file).catch(console.error)))
+  .action((file, cmd) => showBanner(name).then(() => generate(process.cwd(), file).catch(onError)))
 
 program
   .command('browse <file>')
   .description('opens the browser to view the resources in the document file')
-  .action((file, cmd) => showBanner(name).then(() => browse(process.cwd(), file).catch(console.error)))
+  .action((file, cmd) => showBanner(name).then(() => browse(process.cwd(), file).catch(onError)))
 
 program
   .command('deploy <file>')
   .description('deploy the API with mock integration to AWS API Gateway')
-  .action((file, cmd) => showBanner(name).then(() => deploy(process.cwd(), file).catch(console.error)))
+  .action((file, cmd) => showBanner(name).then(() => deploy(process.cwd(), file).catch(onError)))
 
 program
   .command('output <file>')
@@ -167,7 +178,8 @@ program
 program
   .command('clean')
   .description('remove the generated .rx/ directory')
-  .action((cmd) => showBanner(name).then(() => clean(process.cwd()).catch(console.error)))
+  .action((cmd) => showBanner(name).then(() => clean(process.cwd()).catch(onError)))
 
 program
   .parse(process.argv)
+ 

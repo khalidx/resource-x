@@ -28,6 +28,7 @@
   },
   "scripts": {
     "dev": "ts-node ./src/cli.ts",
+    "debug": "DEBUG=rx:* npm run dev",
     "clean": "rimraf ./dist/ ./exec/",
     "build": "npm run clean && tsc",
     "test": "npm run build && ava --verbose",
@@ -37,6 +38,7 @@
     "aws-sdk": "^2.449.0",
     "camelcase": "^5.3.1",
     "commander": "^2.20.0",
+    "debug": "^4.1.1",
     "express": "^4.16.4",
     "figlet": "^1.2.3",
     "fs-extra": "^7.0.1",
