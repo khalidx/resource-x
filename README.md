@@ -18,6 +18,14 @@ Deploy an API to the cloud **in under 30 seconds**, *in just 3 steps*.
 
 3) You can then deploy your specification to AWS API Gateway, complete with request validation and mock responses, with a single `rx deploy` command.
 
+## Installation
+
+Installing is easy with `npm`.
+
+```sh
+npm install -g @khalidx/resource-x
+```
+
 ## Usage
 
 Initialize a new sample project in the current directory.
