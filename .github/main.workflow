@@ -1,6 +1,6 @@
 workflow "Install, build, and test on push" {
-  resolves = ["test"]
   on = "push"
+  resolves = ["publish"]
 }
 
 action "install" {
@@ -12,4 +12,17 @@ action "test" {
   uses = "actions/npm@59b64a598378f31e49cb76f27d6f3312b582f680"
   needs = ["install"]
   args = "test"
+}
+
+action "filter for a version tag" {
+  uses = "actions/bin/filter@3c0b4f0e63ea54ea5df2914b4fabf383368cd0da"
+  needs = ["test"]
+  args = "tag v*"
+}
+
+action "publish" {
+  uses = "actions/npm@59b64a598378f31e49cb76f27d6f3312b582f680"
+  needs = ["filter for a version tag"]
+  args = "publish"
+  secrets = ["NPM_AUTH_TOKEN"]
 }
