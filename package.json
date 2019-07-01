@@ -17,7 +17,9 @@
     "url": "https://github.com/khalidx/resource-x.git"
   },
   "main": "dist/index.js",
-  "bin": "dist/cli.js",
+  "bin": {
+    "rx": "dist/cli.js"
+  },
   "files": [
     "dist/**/*",
     "!dist/**/*.test.js"
