@@ -1,6 +1,5 @@
 {
   "name": "resource-x",
-  "private": true,
   "version": "1.0.0",
   "description": "Resource and domain modeling for quick APIs, CMSs, and applications.",
   "author": "Khalid Zoabi <kzoabi@outlook.com>",
