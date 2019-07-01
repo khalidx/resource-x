@@ -181,7 +181,7 @@ export const mocks = async (specification: Spec): Promise<Spec> => {
  * Deploys the Swagger API specification to AWS API Gateway
  * @param specification the Swagger API specification object
  */
-export const deploy = async (specification: Spec): Promise<void> => {
+export const deploy = async (specification: Spec, id?: string): Promise<{ id: string, url: string }> => {
   try {
     let gateway = new AWS.APIGateway({
       apiVersion: '2015-07-09',
@@ -193,15 +193,30 @@ export const deploy = async (specification: Spec): Promise<void> => {
     if (!gateway.config.region) console.error('Please specify an AWS_REGION as an environment variable or in the AWS config file.')
     if (!gateway.config.credentials) console.error('Please specify an AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY (or AWS_PROFILE) as environment variables.')
     if (!gateway.config.region || !gateway.config.credentials) throw new Error('Missing AWS configuration.')
-    let importResponse = await gateway.importRestApi({
-      body: JSON.stringify(specification, null, 2),
-      failOnWarnings: true
-    }).promise()
+    if (id && id.length > 0) {
+      await gateway.putRestApi({
+        restApiId: id,
+        failOnWarnings: true,
+        mode: 'overwrite',
+        body: JSON.stringify(specification, null, 2)
+      }).promise()
+    } else {
+      let importResponse = await gateway.importRestApi({
+        body: JSON.stringify(specification, null, 2),
+        failOnWarnings: true
+      }).promise()
+      id = importResponse.id
+    }
     let deploymentResponse = await gateway.createDeployment({
-      restApiId: importResponse.id,
+      restApiId: id,
       stageName: 'dev'
     }).promise()
-    console.log(`Url: https://${importResponse.id}.execute-api.${process.env.AWS_REGION}.amazonaws.com/dev`)
+    let url = `https://${id}.execute-api.${gateway.config.region}.amazonaws.com/dev`
+    console.log(`Url: ${url}`)
+    return {
+      id,
+      url
+    }
   } catch (error) {
     throw new Error(`Error while deploying the swagger specification to the AWS API Gateway: ${error.message}`)
   }
