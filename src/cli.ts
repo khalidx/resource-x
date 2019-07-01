@@ -38,7 +38,8 @@ export const generate = async (directory: string, file: string): Promise<void> =
     // Read the document from the provided directory and file combination
     let document = (await fse.readFile(path.join(directory, file))).toString()
     // Generate the API specification from the document
-    let specification = await rx.specification(await rx.schemas(await rx.tokens(document)))
+    let tokens = await rx.tokens(document)
+    let specification = await rx.specification(await rx.schemas(tokens), await rx.title(tokens))
     // Ensure the output .rx/ directory is created
     let rxDirectory = await path.join(directory, '.rx/')
     await fse.ensureDir(rxDirectory)

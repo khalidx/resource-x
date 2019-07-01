@@ -41,16 +41,32 @@ export const schemas = async (tokens: marked.TokensList): Promise<string> => {
 }
 
 /**
+ * Finds the first top-level (h1) Markdown heading in the token list, and normalizes it.
+ * Normalization turns the title into all lowercase with dashes instead of spaces.
+ * @param tokens the Markdown tokens
+ */
+export const title = async (tokens: marked.TokensList): Promise<string> => {
+  try {
+    let heading = tokens.find(token => token.type === 'heading' && token.depth == 1) as marked.Tokens.Heading
+    if (!heading || !heading.text || heading.text.length == 0)
+      throw new Error('No heading found in the document. Specify a heading like "# Some heading"')
+    return heading.text.toLowerCase().split(' ').join('-')
+  } catch (error) {
+    throw new Error(`Error while getting title from the Markdown document: ${error.message}`)
+  }
+}
+
+/**
  * Creates a Swagger API specification with CRUD operations for each schema
  * @param schemas the combined schemas string
  */
-export const specification = async (schemas: string): Promise<Spec> => {
+export const specification = async (schemas: string, title: string): Promise<Spec> => {
   try {
     // build a swagger definition from schemas
     let specification: Spec = {
       swagger: '2.0',
       info: {
-        title: 'schemas',
+        title,
         version: '1.0.0'
       },
       consumes: [ 'application/json' ],

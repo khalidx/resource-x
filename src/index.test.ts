@@ -6,6 +6,7 @@ import fse from 'fs-extra'
 import {
   tokens,
   schemas,
+  title,
   specification,
   mocks
 } from './index'
@@ -28,12 +29,14 @@ test('can find Markdown code blocks and create a combined schemas string', async
 })
 
 test('can create a Swagger API specification with CRUD operations for each schema', async t => {
-  let actual = await specification(await schemas(await tokens(document)))
+  let tokenss = await tokens(document)
+  let actual = await specification(await schemas(tokenss), await title(tokenss))
   t.true(Object.keys(actual.paths).length > 0)
 })
 
 test('can add the AWS API Gateway mock integrations to the Swagger API specification', async t => {
-  let actual = await mocks(await specification(await schemas(await tokens(document))))
+  let tokenss = await tokens(document)
+  let actual = await mocks(await specification(await schemas(tokenss), await title(tokenss)))
   t.truthy(actual.paths[Object.keys(actual.paths)[0]].post['x-amazon-apigateway-integration'])
   t.is(actual.paths[Object.keys(actual.paths)[0]].post['x-amazon-apigateway-integration'].type, 'mock')
 })
