@@ -126,7 +126,7 @@ export const deploy = async (directory: string, file: string): Promise<void> => 
  */
 export const clean = async (directory: string): Promise<void> => {
   try {
-    console.warn('Cleaning the .rx/ directory will remove the AWS API ID tracker (deploy.json).')
+    console.warn('Cleaning the .rx/ directory will remove any AWS API ID tracker (deploy.json) files.')
     console.warn('The next time you deploy, a new API will be created.')
     let { proceed } = await inquirer.prompt<{ proceed: boolean }>([
       {
