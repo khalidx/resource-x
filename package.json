@@ -17,22 +17,26 @@
     "type": "git",
     "url": "https://github.com/khalidx/resource-x.git"
   },
-  "main": "./dist/index.js",
-  "bin": "./dist/cli.js",
+  "main": "dist/index.js",
+  "bin": "dist/cli.js",
+  "files": [
+    "dist/**/*",
+    "!dist/**/*.test.js"
+  ],
   "pkg": {
     "assets": [
-      "./sample.md",
-      "./node_modules/figlet/fonts/Standard.flf",
-      "./node_modules/swagger-ui-dist/**/*"
+      "sample.md",
+      "node_modules/figlet/fonts/Standard.flf",
+      "node_modules/swagger-ui-dist/**/*"
     ]
   },
   "scripts": {
-    "dev": "ts-node ./src/cli.ts",
+    "dev": "ts-node src/cli.ts",
     "debug": "DEBUG=rx:* npm run dev",
-    "clean": "rimraf ./dist/ ./exec/",
+    "clean": "rimraf dist/ exec/",
     "build": "npm run clean && tsc",
     "test": "npm run build && ava --verbose",
-    "bundle": "npm run build && pkg . --out-dir ./exec/"
+    "bundle": "npm run build && pkg . --out-dir exec/"
   },
   "dependencies": {
     "aws-sdk": "^2.449.0",
