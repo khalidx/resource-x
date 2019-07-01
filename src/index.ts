@@ -4,7 +4,7 @@ import pluralize from 'pluralize'
 import swagger from 'swagger-parser'
 import { Spec } from 'swagger-schema-official'
 import camelCase from 'camelcase'
-import { APIGateway } from 'aws-sdk'
+import AWS from 'aws-sdk'
 
 /**
  * Uses the marked lexer to extract tokens from the Markdown document
@@ -183,10 +183,16 @@ export const mocks = async (specification: Spec): Promise<Spec> => {
  */
 export const deploy = async (specification: Spec): Promise<void> => {
   try {
-    if (!process.env.AWS_PROFILE || !process.env.AWS_REGION) {
-      throw new Error('You must provide an AWS_PROFILE and AWS_REGION to proceed.')
-    }
-    let gateway = new APIGateway({ apiVersion: '2015-07-09' })
+    let gateway = new AWS.APIGateway({
+      apiVersion: '2015-07-09',
+      credentialProvider: new AWS.CredentialProviderChain([
+        () => new AWS.EnvironmentCredentials('AWS'),
+        () => new AWS.SharedIniFileCredentials()
+      ])
+    })
+    if (!gateway.config.region) console.error('Please specify an AWS_REGION as an environment variable or in the AWS config file.')
+    if (!gateway.config.credentials) console.error('Please specify an AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY (or AWS_PROFILE) as environment variables.')
+    if (!gateway.config.region || !gateway.config.credentials) throw new Error('Missing AWS configuration.')
     let importResponse = await gateway.importRestApi({
       body: JSON.stringify(specification, null, 2),
       failOnWarnings: true
