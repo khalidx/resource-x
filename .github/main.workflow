@@ -1,9 +1,6 @@
 workflow "Install, build, and test on push" {
   on = "push"
-  resolves = [
-    "publish",
-    "filter for master branch",
-  ]
+  resolves = ["publish"]
 }
 
 action "install" {
@@ -17,15 +14,9 @@ action "test" {
   args = "test"
 }
 
-action "filter for master branch" {
-  uses = "actions/bin/filter@3c0b4f0e63ea54ea5df2914b4fabf383368cd0da"
-  needs = ["test"]
-  args = "branch master"
-}
-
 action "filter for a version tag" {
   uses = "actions/bin/filter@3c0b4f0e63ea54ea5df2914b4fabf383368cd0da"
-  needs = ["filter for master branch"]
+  needs = ["test"]
   args = "tag v*"
 }
 
