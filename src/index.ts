@@ -4,6 +4,7 @@ import pluralize from 'pluralize'
 import swagger from 'swagger-parser'
 import { Spec } from 'swagger-schema-official'
 import camelCase from 'camelcase'
+import jsf from 'json-schema-faker'
 import AWS from 'aws-sdk'
 
 /**
@@ -187,14 +188,24 @@ export const mocks = async (specification: Spec): Promise<Spec> => {
   try {
     for (let pathKey of Object.keys(specification.paths)) {
       for (let operationKey of Object.keys(specification.paths[pathKey])) {
+        let responses = specification.paths[pathKey][operationKey].responses
+        let status = Object.keys(responses)[0]
+        let schema = responses[status].schema
+        let mockData: any
+        if (schema) mockData = await jsf.resolve(schema)
         specification.paths[pathKey][operationKey]['x-amazon-apigateway-integration'] = {
           type: 'mock',
           requestTemplates: {
             'application/json': '{\"statusCode\": 200}'
           },
           responses: {
-            default: {
-              statusCode: '200'
+            default: (mockData) ? {
+              statusCode: `${status}`,
+              responseTemplates: {
+                'application/json': JSON.stringify(mockData, null, 2)
+              } 
+            } : {
+              statusCode: `${status}`
             }
           },
           passthroughBehavior: 'when_no_match'
