@@ -88,7 +88,7 @@ export const specification = async (schemas: string, title: string): Promise<Spe
           tags: [ collection ],
           responses: {
             '200': {
-              description: '',
+              description: '200 OK',
               schema: {
                 type: 'array',
                 items: {
@@ -103,7 +103,7 @@ export const specification = async (schemas: string, title: string): Promise<Spe
           tags: [ collection ],
           responses: {
             '201': {
-              description: '',
+              description: '201 Created',
               schema: {
                 $ref: `#/definitions/${key}`
               }
@@ -126,10 +126,46 @@ export const specification = async (schemas: string, title: string): Promise<Spe
           ],
           responses: {
             '200': {
-              description: '',
+              description: '200 OK',
               schema: {
                 $ref: `#/definitions/${key}`
               }
+            }
+          }
+        },
+        put: {
+          operationId: camelCase([ 'put', key ]),
+          tags: [ collection ],
+          parameters: [
+            {
+              name: `${key}Id`,
+              in: 'path',
+              required: true,
+              type: 'integer',
+              format: 'int64'
+            }
+          ],
+          responses: {
+            '204': {
+              description: '204 No Content'
+            }
+          }
+        },
+        delete: {
+          operationId: camelCase([ 'delete', key ]),
+          tags: [ collection ],
+          parameters: [
+            {
+              name: `${key}Id`,
+              in: 'path',
+              required: true,
+              type: 'integer',
+              format: 'int64'
+            }
+          ],
+          responses: {
+            '204': {
+              description: '204 No Content'
             }
           }
         }
