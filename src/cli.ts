@@ -121,6 +121,30 @@ export const deploy = async (directory: string, file: string): Promise<void> => 
 }
 
 /**
+ * Undeploys (removes) the API from AWS API Gateway
+ * @param directory the path of the directory to use
+ * @param file the name of the document file to use
+ */
+export const undeploy = async (directory: string, file: string): Promise<void> => {
+  try {
+    // Ensure the corresponding deploy.json file for the provided document file exists 
+    let deployFile = path.join(directory, '.rx/', path.basename(file, path.extname(file)), 'deploy.json')
+    let deployFileExists = await fse.pathExists(deployFile)
+    if (!deployFileExists) {
+      console.error('No deployment found. The deploy.json file does not exist.')
+      return
+    }
+    // Read the deploy.json
+    let deploy = await fse.readFile(deployFile)
+    let { id } = JSON.parse(deploy.toString())
+    // Undeploy
+    await rx.undeploy(id)
+  } catch (error) {
+    throw new Error(`Error while removing the API from the AWS API Gateway: ${error.message}`)
+  }
+}
+
+/**
  * Removes the generated .rx/ directory
  * @param directory the path of the directory to use
  */
