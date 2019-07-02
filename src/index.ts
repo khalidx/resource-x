@@ -99,8 +99,8 @@ export const specification = async (schemas: string, title: string): Promise<Spe
           }
         },
         post: {
-          tags: [ collection ],
           operationId: camelCase([ 'post', collection ]),
+          tags: [ collection ],
           responses: {
             '201': {
               description: '',
@@ -126,27 +126,6 @@ export const specification = async (schemas: string, title: string): Promise<Spe
           ],
           responses: {
             '200': {
-              description: '',
-              schema: {
-                $ref: `#/definitions/${key}`
-              }
-            }
-          }
-        },
-        post: {
-          tags: [ collection ],
-          operationId: camelCase([ 'post', key ]),
-          parameters: [
-            {
-              name: `${key}Id`,
-              in: 'path',
-              required: true,
-              type: 'integer',
-              format: 'int64'
-            }
-          ],
-          responses: {
-            '201': {
               description: '',
               schema: {
                 $ref: `#/definitions/${key}`
