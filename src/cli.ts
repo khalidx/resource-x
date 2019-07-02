@@ -197,11 +197,6 @@ program
   .action((file, cmd) => showBanner(name).then(() => deploy(process.cwd(), file).catch(onError)))
 
 program
-  .command('output <file>')
-  .description('output the deployment files without actually deploying')
-  .action((file, cmd) => showBanner(name).then(() => console.error('Not yet implemented.')))
-
-program
   .command('undeploy <file>')
   .description('undeploy the API from AWS API Gateway')
   .action((file, cmd) => showBanner(name).then(() => console.error('Not yet implemented.')))
