@@ -139,6 +139,8 @@ export const undeploy = async (directory: string, file: string): Promise<void> =
     let { id } = JSON.parse(deploy.toString())
     // Undeploy
     await rx.undeploy(id)
+    // Remove the deploy.json file for this document
+    await fse.remove(deployFile)
   } catch (error) {
     throw new Error(`Error while removing the API from the AWS API Gateway: ${error.message}`)
   }
@@ -174,11 +176,11 @@ export const clean = async (directory: string): Promise<void> => {
 /**
  * Clears the console and shows the banner
  */
-async function showBanner (text: string): Promise<void> {
+async function showBanner (): Promise<void> {
   return new Promise(function (resolve, reject) {
     process.stdout.write('\x1b[2J')
     process.stdout.write('\x1b[0f')
-    figlet.text(name, function (error, result) {
+    figlet.text('resource-x', function (error, result) {
       if (error) reject(error)
       else {
         console.log(result)
@@ -203,32 +205,32 @@ program
 program
   .command('init')
   .description('initialize a new sample project in the current directory')
-  .action((cmd) => showBanner('resource-x').then(() => init(process.cwd()).catch(onError)))
+  .action((cmd) => showBanner().then(() => init(process.cwd()).catch(onError)))
 
 program
   .command('generate <file>')
   .description('generate an API specification from the document file')
-  .action((file, cmd) => showBanner(name).then(() => generate(process.cwd(), file).catch(onError)))
+  .action((file, cmd) => showBanner().then(() => generate(process.cwd(), file).catch(onError)))
 
 program
   .command('browse <file>')
   .description('opens the browser to view the resources in the document file')
-  .action((file, cmd) => showBanner(name).then(() => browse(process.cwd(), file).catch(onError)))
+  .action((file, cmd) => showBanner().then(() => browse(process.cwd(), file).catch(onError)))
 
 program
   .command('deploy <file>')
   .description('deploy the API with mock integration to AWS API Gateway')
-  .action((file, cmd) => showBanner(name).then(() => deploy(process.cwd(), file).catch(onError)))
+  .action((file, cmd) => showBanner().then(() => deploy(process.cwd(), file).catch(onError)))
 
 program
   .command('undeploy <file>')
   .description('undeploy the API from AWS API Gateway')
-  .action((file, cmd) => showBanner(name).then(() => console.error('Not yet implemented.')))
+  .action((file, cmd) => showBanner().then(() => undeploy(process.cwd(), file).catch(onError)))
 
 program
   .command('clean')
   .description('remove the generated .rx/ directory')
-  .action((cmd) => showBanner(name).then(() => clean(process.cwd()).catch(onError)))
+  .action((cmd) => showBanner().then(() => clean(process.cwd()).catch(onError)))
 
 program
   .parse(process.argv)
