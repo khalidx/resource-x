@@ -26,6 +26,10 @@ Installing is easy with `npm`.
 npm install -g @khalidx/resource-x
 ```
 
+Alternatively, you can also [download a binary](https://github.com/khalidx/resource-x/releases/latest) for your operating system.
+
+Windows, Mac, and Linux are all supported.
+
 ## Usage
 
 Initialize a new sample project in the current directory.
