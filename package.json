@@ -21,6 +21,7 @@
     "rx": "dist/cli.js"
   },
   "files": [
+    "sample.md",
     "dist/**/*",
     "!dist/**/*.test.js"
   ],
