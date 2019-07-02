@@ -110,6 +110,26 @@ export const specification = async (schemas: string, title: string): Promise<Spe
               }
             }
           }
+        },
+        options: {
+          operationId: camelCase([ 'options', collection ]),
+          tags: [ 'cors' ],
+          responses: {
+            '200': {
+              description: '200 OK',
+              headers: {
+                'Access-Control-Allow-Headers': {
+                  type: 'string'
+                },
+                'Access-Control-Allow-Methods': {
+                  type: 'string'
+                },
+                'Access-Control-Allow-Origin': {
+                  type: 'string'
+                }
+              }
+            }
+          }
         }
       }
       specification.paths[`/${collection}/{${key}Id}`] = {
@@ -169,6 +189,35 @@ export const specification = async (schemas: string, title: string): Promise<Spe
               description: '204 No Content'
             }
           }
+        },
+        options: {
+          operationId: camelCase([ 'options', key ]),
+          tags: [ 'cors' ],
+          parameters: [
+            {
+              name: `${key}Id`,
+              in: 'path',
+              required: true,
+              type: 'integer',
+              format: 'int64'
+            }
+          ],
+          responses: {
+            '200': {
+              description: '200 OK',
+              headers: {
+                'Access-Control-Allow-Headers': {
+                  type: 'string'
+                },
+                'Access-Control-Allow-Methods': {
+                  type: 'string'
+                },
+                'Access-Control-Allow-Origin': {
+                  type: 'string'
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -199,7 +248,17 @@ export const mocks = async (specification: Spec): Promise<Spec> => {
             'application/json': '{\"statusCode\": 200}'
           },
           responses: {
-            default: (mockData) ? {
+            default: (operationKey === 'options') ? {
+              statusCode: '200',
+              responseParameters: {
+                'method.response.header.Access-Control-Allow-Headers': "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+                'method.response.header.Access-Control-Allow-Methods': "'*'",
+                'method.response.header.Access-Control-Allow-Origin': "'*'"
+              },
+              responseTemplates: {
+                'application/json': '{}'
+              }
+            } : (mockData) ? {
               statusCode: `${status}`,
               responseTemplates: {
                 'application/json': JSON.stringify(mockData, null, 2)
