@@ -93,7 +93,7 @@ export const deploy = async (directory: string, file: string): Promise<void> => 
     let swaggerFile = path.join(directory, '.rx/', path.basename(file, path.extname(file)), 'swagger.json')
     let swaggerFileExists = await fse.pathExists(swaggerFile)
     if (!swaggerFileExists) {
-      console.error('The .rx/swagger.json file does not exist. Run the generate command first.')
+      console.error('The swagger.json file does not exist. Run the generate command first.')
       return
     }
     // Read the swagger file
