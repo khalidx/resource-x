@@ -173,15 +173,13 @@ async function onError (error: any): Promise<void> {
   process.exit(1)
 }
 
-let { name, version } = require('../package.json')
-
 program
-  .version(version)
+  .version(require('../package.json').version)
 
 program
   .command('init')
   .description('initialize a new sample project in the current directory')
-  .action((cmd) => showBanner(name).then(() => init(process.cwd()).catch(onError)))
+  .action((cmd) => showBanner('resource-x').then(() => init(process.cwd()).catch(onError)))
 
 program
   .command('generate <file>')
