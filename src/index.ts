@@ -230,11 +230,18 @@ export const specification = async (schemas: string, title: string): Promise<Spe
 }
 
 /**
- * Adds the AWS API Gateway mock integrations to the Swagger API specification
+ * Adds the AWS API Gateway request validation and mock integrations to the Swagger API specification
  * @param specification the Swagger API specification object
  */
 export const mocks = async (specification: Spec): Promise<Spec> => {
   try {
+    specification['x-amazon-apigateway-request-validators'] = {
+      validateBodyAndParameters: {
+        validateRequestBody: true,
+        validateRequestParameters: true
+      }
+    }
+    specification['x-amazon-apigateway-request-validator'] = 'validateBodyAndParameters'
     for (let pathKey of Object.keys(specification.paths)) {
       for (let operationKey of Object.keys(specification.paths[pathKey])) {
         let responses = specification.paths[pathKey][operationKey].responses
