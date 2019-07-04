@@ -35,6 +35,24 @@ export const init = async (directory: string): Promise<void> => {
  */
 export const generate = async (directory: string, file: string): Promise<void> => {
   try {
+    // Check if the corresponding swagger file for the provided document file exists 
+    let swaggerFile = path.join(directory, '.rx/', path.basename(file, path.extname(file)), 'swagger.json')
+    let swaggerFileExists = await fse.pathExists(swaggerFile)
+    if (swaggerFileExists) {
+      console.warn('The swagger.json file already exists. The generate command will overwrite this file.')
+      let { proceed } = await inquirer.prompt<{ proceed: boolean }>([
+        {
+          name: 'proceed',
+          message: 'Are you sure you would like to continue?',
+          type: 'confirm',
+          default: false
+        }
+      ])
+      if (!proceed) {
+        console.log('No changes made.')
+        return
+      }
+    }
     // Read the document from the provided directory and file combination
     let document = (await fse.readFile(path.join(directory, file))).toString()
     // Generate the API specification from the document
