@@ -86,3 +86,5 @@ rx --help
 ## Support
 
 Open a GitHub issue to ask a question, report a bug, raise a concern, or request a new feature.
+
+Also, your question may already be answered on the following [Hacker News thread](https://news.ycombinator.com/item?id=20322759).
