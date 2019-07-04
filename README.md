@@ -55,14 +55,6 @@ Deploy the API with mock integration to AWS API Gateway.
 rx deploy <file>
 ```
 
-Output the deployment files without actually deploying.
-
-This is useful when planning to use Cloudformation or Terraform to do the actual deployment.
-
-```sh
-rx output <file>
-```
-
 Undeploy the API from AWS API Gateway.
 
 ```sh
