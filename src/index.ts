@@ -299,9 +299,10 @@ export const deploy = async (specification: Spec, id?: string): Promise<{ id: st
         () => new AWS.SharedIniFileCredentials()
       ])
     })
-    if (!gateway.config.region) console.error('Please specify an AWS_REGION as an environment variable or in the AWS config file.')
-    if (!gateway.config.credentials) console.error('Please specify an AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY (or AWS_PROFILE) as environment variables.')
-    if (!gateway.config.region || !gateway.config.credentials) throw new Error('Missing AWS configuration.')
+    let errorMessage = ''
+    if (!gateway.config.region) errorMessage += 'Please specify an AWS_REGION as an environment variable or in the AWS config file.\n'
+    if (!gateway.config.credentials) errorMessage += 'Please specify an AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY (or AWS_PROFILE) as environment variables.\n'
+    if (!gateway.config.region || !gateway.config.credentials) throw new Error(`Missing AWS configuration.\n${errorMessage}`)
     if (id && id.length > 0) {
       await gateway.putRestApi({
         restApiId: id,
@@ -321,7 +322,6 @@ export const deploy = async (specification: Spec, id?: string): Promise<{ id: st
       stageName: 'dev'
     }).promise()
     let url = `https://${id}.execute-api.${gateway.config.region}.amazonaws.com/dev`
-    console.log(`Url: ${url}`)
     return {
       id,
       url
@@ -344,9 +344,10 @@ export const undeploy = async (id: string): Promise<void> => {
         () => new AWS.SharedIniFileCredentials()
       ])
     })
-    if (!gateway.config.region) console.error('Please specify an AWS_REGION as an environment variable or in the AWS config file.')
-    if (!gateway.config.credentials) console.error('Please specify an AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY (or AWS_PROFILE) as environment variables.')
-    if (!gateway.config.region || !gateway.config.credentials) throw new Error('Missing AWS configuration.')
+    let errorMessage = ''
+    if (!gateway.config.region) errorMessage += 'Please specify an AWS_REGION as an environment variable or in the AWS config file.\n'
+    if (!gateway.config.credentials) errorMessage += 'Please specify an AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY (or AWS_PROFILE) as environment variables.\n'
+    if (!gateway.config.region || !gateway.config.credentials) throw new Error(`Missing AWS configuration.\n${errorMessage}`)
     await gateway.deleteRestApi({ restApiId: id }).promise()
   } catch (error) {
     throw new Error(`Error while undeploying the API from AWS API Gateway: ${error.message}`)
