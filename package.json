@@ -34,7 +34,6 @@
   },
   "scripts": {
     "dev": "ts-node src/cli.ts",
-    "debug": "DEBUG=rx:* npm run dev",
     "clean": "rimraf dist/ exec/",
     "build": "npm run clean && tsc",
     "test": "npm run build && ava --verbose",

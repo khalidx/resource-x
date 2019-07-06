@@ -3,6 +3,7 @@
 import fse from 'fs-extra'
 import path from 'path'
 import program from 'commander'
+import debug from 'debug'
 import inquirer from 'inquirer'
 import figlet from 'figlet'
 import express from 'express'
@@ -11,7 +12,8 @@ import open from 'open'
 
 import * as rx from './index'
 
-const debug = require('debug')('rx:cli')
+const debugCli = debug('rx:cli')
+debugCli.log = console.info.bind(console)
 
 /**
  * Initializes a new sample project in the specified directory.
@@ -210,15 +212,20 @@ async function showBanner (): Promise<void> {
 
 /**
  * Logs and exits with a non-zero status code on error.
- * If in deb
+ * @param error the error object
  */
 async function onError (error: any): Promise<void> {
-  process.env.DEBUG ? debug(error) : console.error(error.message)
+  // If debug is on, log the entire error object, otherwise log just the message
+  log('error', debug.enabled('rx:cli') ? error : error.message)
   process.exit(1)
 }
 
 program
   .version(require('../package.json').version)
+
+program
+  .option('-d, --debug', 'Show debug-level "verbose" output while running commands')
+  .on('option:debug', () => debug.enable('rx:cli'))
 
 program
   .command('init')
