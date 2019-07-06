@@ -3,25 +3,19 @@ import test from 'ava'
 import path from 'path'
 import fse from 'fs-extra'
 
-import {
-  init,
-  generate,
-  clean
-} from './cli'
+import { init } from './init'
+import { generate } from './generate'
 
-let scratchDirectory = path.join(__dirname, '../scratch/')
+let scratchDirectory = path.join(__dirname, '../scratch/generate/')
 
 test.before(async t => {
   // create a temporary scratch directory for test files
   await fse.ensureDir(scratchDirectory)
-})
-
-test.serial('can initialize a new project', async t => {
+  // initialize
   await init(scratchDirectory)
-  t.true(await fse.pathExists(path.join(scratchDirectory, 'sample.md')))
 })
 
-test.serial('can generate an API specification', async t => {
+test('can generate an API specification', async t => {
   await generate(scratchDirectory, 'sample.md')
   t.true(await fse.pathExists(path.join(scratchDirectory, '.rx/sample/', 'swagger.json')))
 })
