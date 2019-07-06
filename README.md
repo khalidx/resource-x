@@ -24,7 +24,7 @@ Deploy an API to the cloud **in under 30 seconds**, *in just 3 steps*.
 
 ## Installation
 
-Installing is easy with `npm`.
+Installing is easy with [npm](https://www.npmjs.com/package/@khalidx/resource-x).
 
 ```sh
 npm install -g @khalidx/resource-x
