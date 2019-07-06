@@ -8,7 +8,6 @@ Resource and domain modeling for quick APIs, CMSs, and applications.
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/khalidx/resource-x.svg?style=flat-square)
 ![GitHub top language](https://img.shields.io/github/languages/top/khalidx/resource-x.svg?style=flat-square)
 
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/khalidx/resource-x.svg?style=flat-square)
 ![GitHub last commit](https://img.shields.io/github/last-commit/khalidx/resource-x.svg?style=flat-square)
 
 ## Features
