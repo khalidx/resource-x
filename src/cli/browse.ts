@@ -1,10 +1,9 @@
-import fse from 'fs-extra'
 import express from 'express'
 import swaggerUi from 'swagger-ui-express'
 import open from 'open'
 
 import { log } from './log'
-import { swaggerFile } from './paths'
+import * as files from './files'
 
 /**
  * Opens the browser to view the generated Swagger API specification.
@@ -13,13 +12,13 @@ import { swaggerFile } from './paths'
  */
 export const browse = async (directory: string, file: string): Promise<void> => {
   // Ensure the corresponding swagger file for the provided document file exists 
-  let exists = await fse.pathExists(swaggerFile(directory, file))
+  let exists = await files.exists(files.swaggerFile(directory, file))
   if (!exists) {
     log('error', 'The .rx/swagger.json file does not exist. Run the generate command first.')
     return
   }
   // Read the swagger file
-  let specification = JSON.parse((await fse.readFile(swaggerFile(directory, file))).toString())
+  let specification = await files.readSwaggerFile(directory, file)
   // Serve the Swagger file in the Swagger UI, and open the browser
   let app = express()
   let port = 8080
