@@ -25,19 +25,15 @@
     "dist/**/*",
     "!dist/**/*.test.js"
   ],
-  "pkg": {
-    "assets": [
-      "sample.md",
-      "node_modules/figlet/fonts/Standard.flf",
-      "node_modules/swagger-ui-dist/**/*"
-    ]
-  },
   "scripts": {
     "dev": "ts-node src/cli.ts",
     "clean": "rimraf dist/ exec/",
     "build": "npm run clean && tsc",
     "test": "npm run build && ava --verbose",
-    "bundle": "npm run build && pkg . --out-dir exec/"
+    "bundle-windows": "nexe --resource \"./sample.md\" --input dist/cli.js --name exec/rx-windows --target windows-10.16.0",
+    "bundle-macos": "nexe --resource \"./sample.md\" --input dist/cli.js --name exec/rx-macos --target macos-10.16.0",
+    "bundle-linux": "nexe --resource \"./sample.md\" --input dist/cli.js --name exec/rx-linux --target linux-10.16.0",
+    "bundle": "npm run build && npm run bundle-windows && npm run bundle-macos && npm run bundle-linux"
   },
   "dependencies": {
     "aws-sdk": "^2.449.0",
