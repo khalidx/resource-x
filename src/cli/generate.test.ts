@@ -17,7 +17,7 @@ test.before(async t => {
 
 test('can generate an API specification', async t => {
   await generate(scratchDirectory, 'sample.md')
-  t.true(await fse.pathExists(path.join(scratchDirectory, '.rx/sample/', 'swagger.json')))
+  t.true(await fse.pathExists(path.join(scratchDirectory, '.rx/sample/', 'swagger.yaml')))
 })
 
 test.after(async t => {
