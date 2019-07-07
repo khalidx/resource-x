@@ -1,8 +1,9 @@
 import marked from 'marked'
-import yaml from 'yamljs'
+import yaml from 'js-yaml'
 import pluralize from 'pluralize'
 import swagger from 'swagger-parser'
 import { OpenAPIV2 } from 'openapi-types'
+import { cloneDeep } from 'lodash'
 import camelCase from 'camelcase'
 import jsf from 'json-schema-faker'
 import AWS from 'aws-sdk'
@@ -28,7 +29,7 @@ export const schemas = async (tokens: marked.TokensList): Promise<string> => {
     return tokens.reduce((combined, token) => {
       if (token.type === 'code' && token.text.length > 0) {
         if (token.lang === 'json') {
-          return combined += `${yaml.stringify(JSON.parse(token.text))}\n`
+          return combined += `${yaml.safeDump(JSON.parse(token.text), { noRefs: true })}\n`
         }
         if (token.lang === 'yaml') {
           return combined += `${token.text}\n`
@@ -72,17 +73,16 @@ export const specification = async (schemas: string, title: string): Promise<Ope
       },
       consumes: [ 'application/json' ],
       produces: [ 'application/json' ],
+      tags: [],
       paths: {},
-      definitions: yaml.parse(schemas)
+      definitions: yaml.safeLoad(schemas)
     }
     // validate schemas
-    specification = await swagger.validate(specification) as OpenAPIV2.Document
+    await swagger.validate(cloneDeep(specification))
     // build all default routes for all resources
     for (let key of Object.keys(specification.definitions)) {
       let collection = pluralize(key)
-      specification.tags = [
-        { name: collection }
-      ]
+      specification.tags.push({ name: collection })
       specification.paths[`/${collection}`] = {
         get: {
           operationId: camelCase([ 'get', collection ]),
@@ -240,7 +240,9 @@ export const specification = async (schemas: string, title: string): Promise<Ope
       }
     }
     // validate swagger definition against the official swagger schema and spec
-    specification = await swagger.validate(specification) as OpenAPIV2.Document
+    await swagger.validate(cloneDeep(specification))
+    // bundle and use internal $refs
+    specification = await swagger.bundle(specification) as OpenAPIV2.Document
     return specification
   } catch (error) {
     throw new Error(`Error while generating the swagger specification from the document: ${error.message}`)
