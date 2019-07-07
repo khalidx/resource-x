@@ -2,7 +2,7 @@ import marked from 'marked'
 import yaml from 'yamljs'
 import pluralize from 'pluralize'
 import swagger from 'swagger-parser'
-import { Spec } from 'swagger-schema-official'
+import { OpenAPIV2 } from 'openapi-types'
 import camelCase from 'camelcase'
 import jsf from 'json-schema-faker'
 import AWS from 'aws-sdk'
@@ -61,10 +61,10 @@ export const title = async (tokens: marked.TokensList): Promise<string> => {
  * Creates a Swagger API specification with CRUD operations for each schema
  * @param schemas the combined schemas string
  */
-export const specification = async (schemas: string, title: string): Promise<Spec> => {
+export const specification = async (schemas: string, title: string): Promise<OpenAPIV2.Document> => {
   try {
     // build a swagger definition from schemas
-    let specification: Spec = {
+    let specification: OpenAPIV2.Document = {
       swagger: '2.0',
       info: {
         title,
@@ -76,7 +76,7 @@ export const specification = async (schemas: string, title: string): Promise<Spe
       definitions: yaml.parse(schemas)
     }
     // validate schemas
-    specification = await swagger.validate(specification)
+    specification = await swagger.validate(specification) as OpenAPIV2.Document
     // build all default routes for all resources
     for (let key of Object.keys(specification.definitions)) {
       let collection = pluralize(key)
@@ -222,7 +222,7 @@ export const specification = async (schemas: string, title: string): Promise<Spe
       }
     }
     // validate swagger definition against the official swagger schema and spec
-    specification = await swagger.validate(specification)
+    specification = await swagger.validate(specification) as OpenAPIV2.Document
     return specification
   } catch (error) {
     throw new Error(`Error while generating the swagger specification from the document: ${error.message}`)
@@ -233,7 +233,7 @@ export const specification = async (schemas: string, title: string): Promise<Spe
  * Adds the AWS API Gateway request validation and mock integrations to the Swagger API specification
  * @param specification the Swagger API specification object
  */
-export const mocks = async (specification: Spec): Promise<Spec> => {
+export const mocks = async (specification: OpenAPIV2.Document): Promise<OpenAPIV2.Document> => {
   try {
     specification['x-amazon-apigateway-request-validators'] = {
       validateBodyAndParameters: {
@@ -278,7 +278,7 @@ export const mocks = async (specification: Spec): Promise<Spec> => {
         }
       }
     }
-    specification = await swagger.validate(specification)
+    specification = await swagger.validate(specification) as OpenAPIV2.Document
     return specification
   } catch (error) {
     throw new Error(`Error while generating the mock integrations for the swagger specification: ${error.message}`)
@@ -290,7 +290,7 @@ export const mocks = async (specification: Spec): Promise<Spec> => {
  * @param specification the Swagger API specification object
  * @param id the id of the existing API to update instead of deploying new
  */
-export const deploy = async (specification: Spec, id?: string): Promise<{ id: string, url: string }> => {
+export const deploy = async (specification: OpenAPIV2.Document, id?: string): Promise<{ id: string, url: string }> => {
   try {
     let gateway = new AWS.APIGateway({
       apiVersion: '2015-07-09',
