@@ -10,7 +10,7 @@ Resource and domain modeling for quick APIs, CMSs, and applications.
 
 ![GitHub last commit](https://img.shields.io/github/last-commit/khalidx/resource-x.svg?style=flat-square)
 
-## Features
+## Quick start
 
 Deploy an API to the cloud **in under 30 seconds**, *in just 3 steps*.
 
@@ -18,9 +18,21 @@ Deploy an API to the cloud **in under 30 seconds**, *in just 3 steps*.
 
 1) Build your domain objects as JSON Schemas, all in the same Markdown document. Alternatively, run `rx init` to get a [ready-to-use document](./sample.md) with two sample schemas.
    
-2) When you run `rx generate`, you'll get a full CRUD (create-read-update-delete) Swagger specification for your API.
+2) When you run `rx generate sample.md`, you'll get a full CRUD (create-read-update-delete) Swagger specification for your API.
 
-3) You can then deploy your specification to AWS API Gateway, complete with request validation and mock responses, with a single `rx deploy` command.
+3) You can then deploy your specification to AWS API Gateway, complete with request validation and mock responses, with a single `rx deploy sample.md` command.
+
+How easy was that?
+
+## Features
+
+- Domain modeling with simple schema objects
+- Markdown support for easy writing, easy sharing, and good documentation
+- Generate a full CRUD Swagger REST API with a single command
+- Deploy a fully mocked API to AWS API gateway with a single command
+- Request validation based on your schema objects
+- CLI application works on Windows, Mac, and Linux, and everywhere node is supported
+- Open source + free forever, with excellent [support](#Support)
 
 ## Installation
 
