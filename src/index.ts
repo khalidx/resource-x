@@ -102,6 +102,16 @@ export const specification = async (schemas: string, title: string): Promise<Ope
         post: {
           operationId: camelCase([ 'post', collection ]),
           tags: [ collection ],
+          parameters: [
+            {
+              name: key,
+              in: 'body',
+              required: true,
+              schema: {
+                $ref: `#/definitions/${key}`
+              }
+            }
+          ],
           responses: {
             '201': {
               description: '201 Created',
@@ -164,6 +174,14 @@ export const specification = async (schemas: string, title: string): Promise<Ope
               required: true,
               type: 'integer',
               format: 'int64'
+            },
+            {
+              name: key,
+              in: 'body',
+              required: true,
+              schema: {
+                $ref: `#/definitions/${key}`
+              }
             }
           ],
           responses: {
