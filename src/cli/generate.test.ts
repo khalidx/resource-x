@@ -6,7 +6,7 @@ import fse from 'fs-extra'
 import { init } from './init'
 import { generate } from './generate'
 
-let scratchDirectory = path.join(__dirname, '../scratch/generate/')
+let scratchDirectory = path.join(__dirname, '../scratch-generate/')
 
 test.before(async t => {
   // create a temporary scratch directory for test files
