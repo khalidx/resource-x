@@ -20,7 +20,7 @@ export const tokens = async (document: string): Promise<marked.TokensList> => {
 }
 
 /**
- * Finds Markdown code blocks in the token list, and combines them into a string containing schemas
+ * Finds Markdown code blocks in the token list, and combines them into a YAML string containing schemas
  * @param tokens the Markdown tokens
  */
 export const schemas = async (tokens: marked.TokensList): Promise<string> => {
@@ -303,12 +303,17 @@ export const mocks = async (specification: OpenAPIV2.Document): Promise<OpenAPIV
   }
 }
 
+export interface Deploy {
+  id: string
+  url: string
+}
+
 /**
  * Deploys the Swagger API specification to AWS API Gateway
  * @param specification the Swagger API specification object
  * @param id the id of the existing API to update instead of deploying new
  */
-export const deploy = async (specification: OpenAPIV2.Document, id?: string): Promise<{ id: string, url: string }> => {
+export const deploy = async (specification: OpenAPIV2.Document, id?: string): Promise<Deploy> => {
   try {
     let gateway = new AWS.APIGateway({
       apiVersion: '2015-07-09',
@@ -339,10 +344,9 @@ export const deploy = async (specification: OpenAPIV2.Document, id?: string): Pr
       restApiId: id,
       stageName: 'dev'
     }).promise()
-    let url = `https://${id}.execute-api.${gateway.config.region}.amazonaws.com/dev`
     return {
       id,
-      url
+      url: `https://${id}.execute-api.${gateway.config.region}.amazonaws.com/dev`
     }
   } catch (error) {
     throw new Error(`Error while deploying the swagger specification to the AWS API Gateway: ${error.message}`)
