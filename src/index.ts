@@ -255,6 +255,8 @@ export const specification = async (schemas: string, title: string): Promise<Ope
  */
 export const mocks = async (specification: OpenAPIV2.Document): Promise<OpenAPIV2.Document> => {
   try {
+    // validate and dereference the specification
+    specification = await swagger.validate(specification) as OpenAPIV2.Document
     specification['x-amazon-apigateway-request-validators'] = {
       validateBodyAndParameters: {
         validateRequestBody: true,
