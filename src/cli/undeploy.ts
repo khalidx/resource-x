@@ -1,8 +1,7 @@
-import path from 'path'
-import fse from 'fs-extra'
+import { remove } from 'fs-extra'
 
 import { log } from './log'
-import { rxSubdirectory } from './paths'
+import * as files from './files'
 import * as rx from '../index'
 
 /**
@@ -12,19 +11,17 @@ import * as rx from '../index'
  */
 export const undeploy = async (directory: string, file: string): Promise<void> => {
   // Ensure the corresponding deploy.json file for the provided document file exists 
-  let deployFile = path.join(rxSubdirectory(directory, file), 'deploy.json')
-  let deployFileExists = await fse.pathExists(deployFile)
-  if (!deployFileExists) {
+  let exists = await files.exists(files.deployFile(directory, file))
+  if (!exists) {
     log('error', 'No deployment found. The deploy.json file does not exist.')
     return
   }
   // Read the deploy.json
-  let deploy = await fse.readFile(deployFile)
-  let { id } = JSON.parse(deploy.toString())
+  let deploy = await files.readDeployFile(directory, file)
   // Undeploy
-  log('message', `Removing deployment ${id} ...`)
-  await rx.undeploy(id)
+  log('message', `Removing deployment ${deploy.id} ...`)
+  await rx.undeploy(deploy.id)
   // Remove the deploy.json file for this document
-  await fse.remove(deployFile)
+  await remove(files.deployFile(directory, file))
   log('success', 'Undeployed successfully.')
 }
