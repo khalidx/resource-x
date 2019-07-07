@@ -1,8 +1,8 @@
-import fse from 'fs-extra'
+import { remove } from 'fs-extra'
 import inquirer from 'inquirer'
 
 import { log } from './log'
-import { rxDirectory } from './paths'
+import { rxDirectory } from './files'
 
 /**
  * Removes the generated .rx/ directory
@@ -23,6 +23,6 @@ export const clean = async (directory: string): Promise<void> => {
     log('message', 'No changes made.')
     return
   }
-  await fse.remove(rxDirectory(directory))
+  await remove(rxDirectory(directory))
   log('success', 'Directory removed.')
 }
