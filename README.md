@@ -32,7 +32,7 @@ How easy was that?
 - Deploy a fully mocked API to AWS API gateway with a single command
 - Request validation based on your schema objects
 - CLI application works on Windows, Mac, and Linux, and everywhere node is supported
-- Open source + free forever, with excellent [support](#Support)
+- Open source + free forever, with excellent support
 
 ## Installation
 
