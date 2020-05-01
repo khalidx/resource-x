@@ -1,4 +1,6 @@
 # Ignore generated directories
+tmp/
+lib/
 dist/
 exec/
 

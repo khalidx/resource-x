@@ -1,9 +1,14 @@
 {
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dist",
+    "declaration": true,
+    "importHelpers": true,
     "module": "commonjs",
-    "target": "es6",
-    "esModuleInterop": true
-  }
+    "outDir": "lib",
+    "rootDir": "src",
+    "strict": true,
+    "target": "es2017"
+  },
+  "include": [
+    "src/**/*"
+  ]
 }
