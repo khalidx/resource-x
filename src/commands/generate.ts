@@ -1,5 +1,6 @@
 import {Command, flags} from '@oclif/command'
 import {resolve} from 'path'
+import {generate} from '../library/cli/generate'
 
 export default class Generate extends Command {
   static description = 'generate an API specification from the document file'
@@ -20,5 +21,6 @@ export default class Generate extends Command {
 
   async run() {
     const {args, flags} = this.parse(Generate)
+    await generate(process.cwd(), args.file)
   }
 }

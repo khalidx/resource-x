@@ -1,5 +1,6 @@
 import {Command, flags} from '@oclif/command'
 import {resolve} from 'path'
+import {undeploy} from '../library/cli/undeploy'
 
 export default class Undeploy extends Command {
   static description = 'undeploy the API from AWS API Gateway'
@@ -20,5 +21,6 @@ export default class Undeploy extends Command {
 
   async run() {
     const {args, flags} = this.parse(Undeploy)
+    await undeploy(process.cwd(), args.file)
   }
 }

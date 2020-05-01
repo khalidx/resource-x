@@ -14,7 +14,7 @@ import {
 let document: string
 
 test.before(async t => {
-  let file = path.join(__dirname, '../sample.md')
+  let file = path.join(__dirname, '../../sample.md')
   document = (await fse.readFile(file)).toString()
 })
 

@@ -1,5 +1,6 @@
 import {Command, flags} from '@oclif/command'
 import {resolve} from 'path'
+import {browse} from '../library/cli/browse'
 
 export default class Browse extends Command {
   static description = 'opens the browser to view the resources in the document file'
@@ -20,5 +21,6 @@ export default class Browse extends Command {
 
   async run() {
     const {args, flags} = this.parse(Browse)
+    await browse(process.cwd(), args.file)
   }
 }

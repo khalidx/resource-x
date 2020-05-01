@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x]
+        node-version: [8.x, 10.x, 12.x]
 
     steps:
     - uses: actions/checkout@v2
@@ -28,3 +28,4 @@ jobs:
     - run: ./bin/run --version
     - run: ./bin/run --help
     - run: npm test
+    - run: npm run test:library

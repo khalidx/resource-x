@@ -5,6 +5,7 @@ import swagger from 'swagger-parser'
 import { OpenAPIV2 } from 'openapi-types'
 import { cloneDeep } from 'lodash'
 import camelCase from 'camelcase'
+// @ts-ignore
 import jsf from 'json-schema-faker'
 import AWS from 'aws-sdk'
 
@@ -80,9 +81,9 @@ export const specification = async (schemas: string, title: string): Promise<Ope
     // validate schemas
     await swagger.validate(cloneDeep(specification))
     // build all default routes for all resources
-    for (let key of Object.keys(specification.definitions)) {
+    for (let key of Object.keys(specification.definitions || {})) {
       let collection = pluralize(key)
-      specification.tags.push({ name: collection })
+      specification.tags?.push({ name: collection })
       specification.paths[`/${collection}`] = {
         get: {
           operationId: camelCase([ 'get', collection ]),
@@ -253,7 +254,7 @@ export const specification = async (schemas: string, title: string): Promise<Ope
  * Adds the AWS API Gateway request validation and mock integrations to the Swagger API specification
  * @param specification the Swagger API specification object
  */
-export const mocks = async (specification: OpenAPIV2.Document): Promise<OpenAPIV2.Document> => {
+export const mocks = async (specification: OpenAPIV2.Document & { [key: string]: any }): Promise<OpenAPIV2.Document> => {
   try {
     // validate and dereference the specification
     specification = await swagger.validate(specification) as OpenAPIV2.Document
@@ -342,6 +343,7 @@ export const deploy = async (specification: OpenAPIV2.Document, id?: string): Pr
         body: JSON.stringify(specification, null, 2),
         failOnWarnings: true
       }).promise()
+      if (!importResponse.id) throw new Error('No id received after importing the API into AWS API Gateway')
       id = importResponse.id
     }
     let deploymentResponse = await gateway.createDeployment({

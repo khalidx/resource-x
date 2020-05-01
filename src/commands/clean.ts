@@ -1,4 +1,5 @@
 import {Command, flags} from '@oclif/command'
+import {clean} from '../library/cli/clean'
 
 export default class Clean extends Command {
   static description = 'remove the generated .rx/ directory'
@@ -12,6 +13,6 @@ export default class Clean extends Command {
 
   async run() {
     const {args, flags} = this.parse(Clean)
+    await clean(process.cwd())
   }
 }
-
