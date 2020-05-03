@@ -21,7 +21,7 @@ Deploy an API to the cloud **in under 30 seconds**, *in just 3 steps*.
 
 ![tutorial](./tutorial.gif)
 
-1) Build your domain objects as JSON Schemas, all in the same Markdown document. Alternatively, run `rx init` to get a [ready-to-use document](./sample.md) with two sample schemas.
+1) Build your domain objects as JSON Schemas, all in the same Markdown document. Alternatively, run `rx init` to get a [ready-to-use document](./example/sample.md) with two sample schemas.
    
 2) When you run `rx generate sample.md`, you'll get a full CRUD (create-read-update-delete) Swagger specification for your API.
 

@@ -27,7 +27,7 @@
     "/lib",
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json",
-    "sample.md"
+    "/example/sample.md"
   ],
   "engines": {
     "node": ">=8.0.0"
