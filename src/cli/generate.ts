@@ -1,34 +1,25 @@
 
-import { ensureDir} from 'fs-extra'
+import { basename } from 'path'
+import { ensureDir } from 'fs-extra'
 import inquirer from 'inquirer'
+// @ts-ignore
+import postman from 'swagger2-to-postmanv2'
 
 import { log } from './log'
 import * as files from './files'
 import * as rx from '../index'
 
 /**
- * Generates an API specification in the specified directory from the specified document file.
+ * Generates files in the specified directory from the specified document file.
+ * Currently, it generates:
+ *   - a Swagger API specification file
+ *   - a Postman Collection file
  * @param directory the absolute path of the directory to use
  * @param file the path of the document file to use
  */
 export const generate = async (directory: string, file: string): Promise<void> => {
   // Check if the corresponding swagger file for the provided document file exists 
-  let exists = await files.exists(files.swaggerFile(directory, file))
-  if (exists) {
-    log('message', 'The swagger.json file already exists. The generate command will overwrite this file.')
-    let { proceed } = await inquirer.prompt<{ proceed: boolean }>([
-      {
-        name: 'proceed',
-        message: 'Are you sure you would like to continue?',
-        type: 'confirm',
-        default: false
-      }
-    ])
-    if (!proceed) {
-      log('message', 'No changes made.')
-      return
-    }
-  }
+  await proceed(await files.exists(files.swaggerFile(directory, file)), basename(files.swaggerFile(directory, file)))
   // Read the document
   let document = await files.readDocumentFile(file)
   // Generate the API specification from the document
@@ -40,6 +31,38 @@ export const generate = async (directory: string, file: string): Promise<void> =
   await files.writeGitignoreFile(directory, file)
   // Write the API specification object to the file-specific directory
   await files.writeSwaggerFile(directory, file, specification)
-  log('success', 'Generated the swagger.json file successfully.')
+  log('success', `Generated the ${basename(files.swaggerFile(directory, file))} file successfully.`)
   log('info', `path: ${files.swaggerFile(directory, file)}`)
+  // Check if the corresponding postman file for the provided document file exists 
+  await proceed(await files.exists(files.postmanFile(directory, file)), basename(files.postmanFile(directory, file)))
+  // Write the Postman collection object to the file-specific directory
+  const collection = await new Promise<object>((resolve, reject) => postman.convert(
+    { type: 'json', data: specification },
+    {},
+    (error: Error, data: { result: boolean, reason?: string, output?: Array<{ type: 'collection', data: object }> }) => {
+    if (error) reject(error)
+    else if (!data.result || !data.output || data.output.length !== 1 || !data.output[0].data) reject(new Error(data.reason || 'Failed to generate the postman collection'))
+    else resolve(data.output[0].data)
+  }))
+  await files.writePostmanFile(directory, file, collection)
+  log('success', `Generated the ${basename(files.postmanFile(directory, file))} file successfully.`)
+  log('info', `path: ${files.postmanFile(directory, file)}`)
+}
+
+const proceed = async (exists: boolean, name: string): Promise<void> => {
+  if (exists) {
+    log('message', `The ${name} file already exists. The generate command will overwrite this file.`)
+    let { proceed } = await inquirer.prompt<{ proceed: boolean }>([
+      {
+        name: 'proceed',
+        message: 'Are you sure you would like to continue?',
+        type: 'confirm',
+        default: false
+      }
+    ])
+    if (!proceed) {
+      log('message', 'No changes made.')
+      throw new Error('Confirmation failed.')
+    }
+  }
 }
