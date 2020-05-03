@@ -72,6 +72,7 @@
     "pluralize": "^8.0.0",
     "swagger-parser": "^8.0.0",
     "swagger-ui-express": "^4.0.7",
+    "swagger2-to-postmanv2": "^1.0.1",
     "tslib": "^1.11.1"
   },
   "devDependencies": {
