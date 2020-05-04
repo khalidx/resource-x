@@ -14,6 +14,7 @@ import * as rx from '../index'
  * Currently, it generates:
  *   - a Swagger API specification file
  *   - a Postman Collection file
+ *   - a Terraform file
  * @param directory the absolute path of the directory to use
  * @param file the path of the document file to use
  */
@@ -47,6 +48,13 @@ export const generate = async (directory: string, file: string): Promise<void> =
   await files.writePostmanFile(directory, file, collection)
   log('success', `Generated the ${basename(files.postmanFile(directory, file))} file successfully.`)
   log('info', `path: ${files.postmanFile(directory, file)}`)
+  // Check if the corresponding terraform file for the provided document file exists 
+  await proceed(await files.exists(files.terraformFile(directory, file)), basename(files.terraformFile(directory, file)))
+  let terraform = await rx.terraform(specification)
+  // Write the Terraform string to the file-specific directory
+  await files.writeTerraformFile(directory, file, terraform)
+  log('success', `Generated the ${basename(files.terraformFile(directory, file))} file successfully.`)
+  log('info', `path: ${files.terraformFile(directory, file)}`)
 }
 
 const proceed = async (exists: boolean, name: string): Promise<void> => {
