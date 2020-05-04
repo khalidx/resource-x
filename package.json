@@ -1,6 +1,6 @@
 {
   "name": "@khalidx/resource-x",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "description": "Resource and domain modeling for quick APIs, CMSs, and applications.",
   "author": "Khalid Zoabi <kzoabi@outlook.com>",
   "license": "MIT",
