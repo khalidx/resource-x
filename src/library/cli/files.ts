@@ -51,6 +51,13 @@ export const swaggerFile = (directory: string, file: string): string => path.joi
 export const postmanFile = (directory: string, file: string): string => path.join(rxSubdirectory(directory, file), 'postman.json')
 
 /**
+ * Returns the resolved path to the Terraform file 
+ * @param directory the absolute path of the directory to use
+ * @param file the path of the document file to use
+ */
+export const terraformFile = (directory: string, file: string): string => path.join(rxSubdirectory(directory, file), 'main.tf')
+
+/**
  * Returns the resolved path to the Swagger with mocks file
  * @param directory the absolute path of the directory to use
  * @param file the path of the document file to use
@@ -99,6 +106,14 @@ export const writeSwaggerFile = (directory: string, file: string, specification:
  * @param object the Postman Collections object
  */
 export const writePostmanFile = (directory: string, file: string, object: object): Promise<void> => fse.writeFile(postmanFile(directory, file), JSON.stringify(object, null, 2))
+
+/**
+ * Writes the Terraform file
+ * @param directory the absolute path of the directory to use
+ * @param file the path of the document file to use
+ * @param string the Terraform string
+ */
+export const writeTerraformFile = (directory: string, file: string, string: string): Promise<void> => fse.writeFile(terraformFile(directory, file), string)
 
 /**
  * Reads the Swagger with mocks file

@@ -308,6 +308,60 @@ export const mocks = async (specification: OpenAPIV2.Document & { [key: string]:
   }
 }
 
+/**
+ * Generates a Terraform string based on the provided Swagger API specification
+ * @param specification the Swagger API specification object
+ */
+export const terraform = async (spec: OpenAPIV2.Document & { [key: string]: any }): Promise<string> => {
+  try {
+    // validate and dereference the specification, and generate mock integrations
+    const specification = await mocks(cloneDeep(spec))
+    // initialize the terraform string
+    let terraformString = ''
+    terraformString += `variable "title" {`                          + '\n'
+    terraformString += '  type = string'                             + '\n'
+    terraformString += `  description = "The title of the API"`      + '\n'
+    terraformString += `  default = "${specification.info.title}"`   + '\n'
+    terraformString += '}'                                           + '\n' + '\n'
+    terraformString += `variable "version" {`                        + '\n'
+    terraformString += '  type = string'                             + '\n'
+    terraformString += `  description = "The version of the API"`    + '\n'
+    terraformString += `  default = "${specification.info.version}"` + '\n'
+    terraformString += '}'                                           + '\n' + '\n'
+    // add terraform interpolation support to specification fields
+    specification.info.title = '${var.title}'
+    specification.info.version = '${var.version}'
+    // generate terraform variables for providing AWS API Gateway integrations for each operation
+    for (let pathKey of Object.keys(specification.paths)) {
+      for (let operationKey of Object.keys(specification.paths[pathKey])) {
+        const operationId = specification.paths[pathKey][operationKey].operationId
+        const integration = specification.paths[pathKey][operationKey]['x-amazon-apigateway-integration']
+        const description = `Provide the AWS API Gateway integration configuration for the ${operationId} operation`
+        terraformString += `variable "${operationId}" {`             + '\n'
+        terraformString += '  type = string'                         + '\n'
+        terraformString += `  description = "${description}"`        + '\n'
+        terraformString += '  default = <<EOF'                       + '\n'
+        terraformString += `${JSON.stringify(integration, null, 2)}` + '\n'
+        terraformString += 'EOF'                                     + '\n'
+        terraformString += '}'                                       + '\n' + '\n'
+        specification.paths[pathKey][operationKey]['x-amazon-apigateway-integration'] = '${var.' + operationId + '}'
+      }
+    }
+    terraformString += `output "swagger_specification" {`                                + '\n'
+    terraformString += `  description = "The interpolated Swagger Specification string"` + '\n'
+    terraformString += `  value = local.swagger_specification`                           + '\n'
+    terraformString += '}'                                                               + '\n' + '\n'
+    terraformString += 'locals {'                                                        + '\n'
+    terraformString += '  swagger_specification = <<EOF'                                 + '\n'
+    terraformString += `${JSON.stringify(specification, null, 2)}`                       + '\n'
+    terraformString += 'EOF'                                                             + '\n'
+    terraformString += '}'                                                               + '\n'
+    return terraformString
+  } catch (error) {
+    throw new Error(`Error while generating the terraform for the swagger specification: ${error.message}`)
+  }
+}
+
 export interface Deploy {
   id: string
   url: string
