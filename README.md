@@ -31,6 +31,7 @@ How easy was that?
 - Generate a full CRUD Swagger REST API with a single command
 - Deploy a fully mocked API to AWS API gateway with a single command
 - Request validation based on your schema objects
+- Generates useful files that you can use with other tools, like `terraform` and `postman`
 - CLI application works on Windows, Mac, and Linux, and everywhere node is supported
 - Open source + free forever, with excellent support
 
@@ -53,6 +54,7 @@ Initialize a new sample project in the current directory.
 ```sh
 rx init
 ```
+
 Generate an API specification from the document file.
 
 ```sh
@@ -98,6 +100,8 @@ rx --help
 - Make sure you only use AWS API Gateway compatible schema definitions. AWS does not support the full Swagger definition language. [Read more](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-known-issues.html#api-gateway-known-issues-rest-apis) about what is supported (and what isn't) in the AWS documentation.
 
 - You may want to do more advanced things with your API that this tool does not support. You can still use the tool to get started and generate a Swagger definition, then modify your definition by hand or with other tools before uploading to AWS manually. This will still save you some time, since writing the initial Swagger with all operations and AWS support is very time consuming.
+
+- The module generates a `main.tf` file for your Swagger specification. This lets you import and continue your workflow in terraform!
 
 ## Support
 
