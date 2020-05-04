@@ -23,7 +23,7 @@ async function onError (error: any): Promise<void> {
 }
 
 program
-  .version(require('../package.json').version)
+  .version(require('../../package.json').version)
 
 program
   .option('-d, --debug', 'Show debug-level "verbose" output while running commands')
