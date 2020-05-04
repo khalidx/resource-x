@@ -55,11 +55,15 @@ Initialize a new sample project in the current directory.
 rx init
 ```
 
+![init](./doc/init.png)
+
 Generate an API specification from the document file.
 
 ```sh
 rx generate <file>
 ```
+
+![generate](./doc/generate.png)
 
 Opens the browser to view the resources in the document file.
 
@@ -67,11 +71,15 @@ Opens the browser to view the resources in the document file.
 rx browse <file>
 ```
 
+![browse](./doc/browse.png)
+
 Deploy the API with mock integration to AWS API Gateway.
 
 ```sh
 rx deploy <file>
 ```
+
+![deploy](./doc/deploy.png)
 
 Undeploy the API from AWS API Gateway.
 
@@ -79,17 +87,23 @@ Undeploy the API from AWS API Gateway.
 rx undeploy <file>
 ```
 
+![undeploy](./doc/undeploy.png)
+
 Remove the generated .rx/ directory.
 
 ```sh
 rx clean
 ```
 
+![clean](./doc/clean.png)
+
 See help and usage information about all available commands.
 
 ```sh
 rx --help
 ```
+
+![help](./doc/help.png)
 
 ## Pro tips and tricks
 
