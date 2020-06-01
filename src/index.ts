@@ -7,6 +7,7 @@ import { cloneDeep } from 'lodash'
 import camelCase from 'camelcase'
 import jsf from 'json-schema-faker'
 import AWS from 'aws-sdk'
+import proxy from 'proxy-agent'
 
 /**
  * Uses the marked lexer to extract tokens from the Markdown document
@@ -373,13 +374,7 @@ export interface Deploy {
  */
 export const deploy = async (specification: OpenAPIV2.Document, id?: string): Promise<Deploy> => {
   try {
-    let gateway = new AWS.APIGateway({
-      apiVersion: '2015-07-09',
-      credentialProvider: new AWS.CredentialProviderChain([
-        () => new AWS.EnvironmentCredentials('AWS'),
-        () => new AWS.SharedIniFileCredentials()
-      ])
-    })
+    let gateway = await createAwsApiGatewayClient()
     let errorMessage = ''
     if (!gateway.config.region) errorMessage += 'Please specify an AWS_REGION as an environment variable or in the AWS config file.\n'
     if (!gateway.config.credentials) errorMessage += 'Please specify an AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY (or AWS_PROFILE) as environment variables.\n'
@@ -417,13 +412,7 @@ export const deploy = async (specification: OpenAPIV2.Document, id?: string): Pr
  */
 export const undeploy = async (id: string): Promise<void> => {
   try {
-    let gateway = new AWS.APIGateway({
-      apiVersion: '2015-07-09',
-      credentialProvider: new AWS.CredentialProviderChain([
-        () => new AWS.EnvironmentCredentials('AWS'),
-        () => new AWS.SharedIniFileCredentials()
-      ])
-    })
+    let gateway = await createAwsApiGatewayClient()
     let errorMessage = ''
     if (!gateway.config.region) errorMessage += 'Please specify an AWS_REGION as an environment variable or in the AWS config file.\n'
     if (!gateway.config.credentials) errorMessage += 'Please specify an AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY (or AWS_PROFILE) as environment variables.\n'
@@ -432,4 +421,22 @@ export const undeploy = async (id: string): Promise<void> => {
   } catch (error) {
     throw new Error(`Error while undeploying the API from AWS API Gateway: ${error.message}`)
   }
+}
+
+export const createAwsApiGatewayClient = async (): Promise<AWS.APIGateway> => {
+  const options: AWS.APIGateway.ClientConfiguration = {
+    apiVersion: '2015-07-09',
+    credentialProvider: new AWS.CredentialProviderChain([
+      () => new AWS.EnvironmentCredentials('AWS'),
+      () => new AWS.SharedIniFileCredentials()
+    ])
+  }
+  const proxyUrl = process.env.HTTPS_PROXY || process.env.HTTP_PROXY
+  if (proxyUrl) {
+    options.httpOptions = {
+      // @ts-ignore
+      agent: proxy(proxyUrl)
+    }
+  }
+  return new AWS.APIGateway(options)
 }
