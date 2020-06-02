@@ -20,6 +20,8 @@ rx generate sample.md
 rx deploy sample.md
 ```
 
+Interested? Check out the easy [installation](#installation) instructions.
+
 ## Tutorial
 
 ![tutorial](./doc/tutorial.gif)
