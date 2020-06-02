@@ -423,6 +423,9 @@ export const undeploy = async (id: string): Promise<void> => {
   }
 }
 
+/**
+ * Creates an AWS API Gateway client, used when deploying/undeploying the API
+ */
 export const createAwsApiGatewayClient = async (): Promise<AWS.APIGateway> => {
   const options: AWS.APIGateway.ClientConfiguration = {
     apiVersion: '2015-07-09',
