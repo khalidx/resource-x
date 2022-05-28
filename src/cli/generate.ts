@@ -27,7 +27,10 @@ export const generate = async (directory: string, file: string): Promise<void> =
   let tokens = await rx.tokens(document)
   let specification = await rx.specification(await rx.schemas(tokens), await rx.title(tokens))
   // Ensure the output .rx/<file>/ directory is created
-  await ensureDir(files.rxSubdirectory(directory, file))
+  await /* TODO: JSFIX could not patch the breaking change:
+  Creating a directory with fs-extra no longer returns the path 
+  Suggested fix: The returned promise no longer includes the path of the new directory */
+  ensureDir(files.rxSubdirectory(directory, file))
   // Write a .gitignore to ensure generated files are not committed
   await files.writeGitignoreFile(directory, file)
   // Write the API specification object to the file-specific directory

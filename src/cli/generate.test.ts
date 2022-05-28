@@ -10,7 +10,10 @@ let scratchDirectory = path.join(__dirname, '../scratch-generate/')
 
 test.before(async t => {
   // create a temporary scratch directory for test files
-  await fse.ensureDir(scratchDirectory)
+  await /* TODO: JSFIX could not patch the breaking change:
+  Creating a directory with fs-extra no longer returns the path 
+  Suggested fix: The returned promise no longer includes the path of the new directory */
+  fse.ensureDir(scratchDirectory)
   // initialize
   await init(scratchDirectory)
 })
